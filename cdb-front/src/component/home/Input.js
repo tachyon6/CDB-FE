@@ -226,8 +226,8 @@ const Input2Button = styled.button`
     background: #3829e0;
   }
   &:active {
-    transform: translateY(0.5px);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    transform: scale(0.95);
+    background: #6A5ACD;
   }
 `;
 

@@ -4,6 +4,7 @@ import Header from "./component/common/Header";
 import Home from "./page/Home";
 import { styled } from "styled-components";
 import List from "./page/List";
+import Admin from "./page/Admin";
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/list" element={<List />} />
+          <Route path="/admin" element={<Admin />} />
         </Routes>
       </Router>
       </DefaultPage>

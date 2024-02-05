@@ -22,8 +22,8 @@ const Description = () => {
             문항 번호 형식은 다음과 같이 구성됩니다.
             <br />
             <HighlightedText>
-            ”시행연도 마지막 두 자리 + 시행월(두자리) +문제 번호 (두자리) +
-            과목(과목)”
+              ”시행연도 마지막 두 자리 + 시행월(두자리) +문제 번호 (두자리) +
+              과목(과목)”
             </HighlightedText>
             <br />
             <br />
@@ -31,16 +31,16 @@ const Description = () => {
             <br />
             가형 → A / 나형 → B
             <br />
-            확통 → A / 미적 → B / 기하 → C
+            확통 → A / 미적 → B / 기하 → C (공통 문항일 경우에는 표기 안함)
           </DescriptionListText1>
           <DescriptionListText2>
-            ex)
-            <br />
             2023학년도 + 6월 + 30번 + 미적분 →{" "}
             <HighlightedText>230630B</HighlightedText>
             <br />
             2021학년도 + 수능 + 9번 + 가형 →{" "}
-            <HighlightedText>210909A</HighlightedText>
+            <HighlightedText>211109A</HighlightedText>
+            <br />
+            2022학년도 + 9월 + 12번 → <HighlightedText>220912</HighlightedText>
           </DescriptionListText2>
         </DescriptionListTextBox>
       </DescriptionList>
@@ -51,7 +51,9 @@ const Description = () => {
         <DescriptionListImg2 />
         <DescriptionListTextBox>
           <DescriptionListText1>
-          제목 입력 후, <HighlightedText>[PDF로 다운받기]</HighlightedText> 버튼을 클릭합니다.
+            제목과 문항 리스트를 입력한 후,{" "}
+            <HighlightedText>[PDF로 다운받기]</HighlightedText> 버튼을
+            클릭합니다.
           </DescriptionListText1>
         </DescriptionListTextBox>
       </DescriptionList>
@@ -62,7 +64,9 @@ const Description = () => {
         <DescriptionListImg3 />
         <DescriptionListTextBox>
           <DescriptionListText1>
-          <HighlightedText>다운로드 완료!</HighlightedText> 평가원과 동일한 형식의 pdf 파일로 출력됩니다.
+            다운로드 완료!{" "}
+            <HighlightedText>평가원과 동일한 형식</HighlightedText>의 pdf 파일로
+            출력됩니다.
           </DescriptionListText1>
         </DescriptionListTextBox>
       </DescriptionList>
@@ -181,7 +185,7 @@ const DescriptionListImg1 = styled.div`
   align-self: stretch;
   border-radius: 0.75rem;
   border: 1px solid var(--Grayscale-999, #000);
-  background: url("/assets/Description1.svg"), lightgray 50% / cover no-repeat;
+  background: url("/assets/Description1.png"), lightgray 50% / cover no-repeat;
 `;
 const DescriptionListImg2 = styled.div`
   width: 11.25rem;
@@ -189,7 +193,7 @@ const DescriptionListImg2 = styled.div`
   align-self: stretch;
   border-radius: 0.75rem;
   border: 1px solid var(--Grayscale-999, #000);
-  background: url("/assets/Description2.svg"), lightgray 50% / cover no-repeat;
+  background: url("/assets/Description2.png"), lightgray 50% / cover no-repeat;
 `;
 const DescriptionListImg3 = styled.div`
   width: 11.25rem;
@@ -197,7 +201,7 @@ const DescriptionListImg3 = styled.div`
   align-self: stretch;
   border-radius: 0.75rem;
   border: 1px solid var(--Grayscale-999, #000);
-  background: url("/assets/Description3.svg"), lightgray 50% / cover no-repeat;
+  background: url("/assets/Description3.png"), lightgray 50% / cover no-repeat;
 `;
 
 const DescriptionListTextBox = styled.div`

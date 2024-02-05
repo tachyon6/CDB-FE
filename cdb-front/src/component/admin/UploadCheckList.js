@@ -1,13 +1,12 @@
 import React, { useState } from "react";
 import styled from "styled-components";
 
-const CheckList = ({ top, mid, bot }) => {
+
+const UploadCheckLlist = ({ top, mid, bot }) => {
   const [isVisibleMid, setIsVisibleMid] = useState(true);
   const [visibleBots, setVisibleBots] = useState({});
-
-  const [selectedTop, setSelectedTop] = useState(false);
-  const [selectedMid, setSelectedMid] = useState([]);
-  const [selectedBot, setSelectedBot] = useState([]);
+  const [selectedMid, setSelectedMid] = useState(null); // 배열에서 단일 값으로 변경
+  const [selectedBot, setSelectedBot] = useState({}); // 선택된 mid에 대한 bot을 저장하기 위해 객체로 변경
 
   const toggleMidVisibility = () => {
     setIsVisibleMid(!isVisibleMid);
@@ -17,79 +16,34 @@ const CheckList = ({ top, mid, bot }) => {
     setVisibleBots((prev) => ({ ...prev, [item]: !prev[item] }));
   };
 
-  const handleTopCheckboxChange = () => {
-    const isTopChecked = !selectedTop;
-    setSelectedTop(isTopChecked);
-    if (isTopChecked) {
-      setSelectedMid(mid);
-      const allBots = mid.reduce((acc, midItem) => {
-        if (bot && bot[midItem]) {
-          acc.push(...bot[midItem]);
-        }
-        return acc;
-      }, []);
-      setSelectedBot(allBots);
-    } else {
-      setSelectedMid([]);
-      setSelectedBot([]);
-    }
-  };
 
   const handleMidCheckboxChange = (item) => {
-    const updatedSelectedMid = selectedMid.includes(item)
-      ? selectedMid.filter((midItem) => midItem !== item)
-      : [...selectedMid, item];
-    setSelectedMid(updatedSelectedMid);
+    const resetBots = Object.keys(selectedBot).reduce((acc, key) => {
+        // 새로 선택한 mid에 대해서만 bot 배열을 유지하고, 나머지는 빈 배열로 초기화
+        acc[key] = key === item ? selectedBot[key] : [];
+        return acc;
+    }, {});
 
-    // 해당 mid에 속한 bot만 변경
-    const updatedSelectedBot = selectedMid.includes(item)
-      ? selectedBot.filter((botItem) => !(bot && bot[item] && bot[item].includes(botItem)))
-        : bot && bot[item] ? [...new Set([...selectedBot, ...bot[item]])] : [...selectedBot];
-
-    setSelectedBot(updatedSelectedBot);
-
-
-    const isTopChecked = mid.every((midItem) =>
-      updatedSelectedMid.includes(midItem)
-    );
-    setSelectedTop(isTopChecked);
+    setSelectedBot(resetBots);
+    setSelectedMid(item); // 선택된 mid를 업데이트
   };
 
   const handleBotCheckboxChange = (midItem, botItem) => {
-    const isBotSelected = selectedBot.includes(botItem);
+    // midItem이 현재 선택된 mid가 아니면 함수 종료
+    if (midItem !== selectedMid) return;
 
-    const updatedSelectedBot = isBotSelected
-      ? selectedBot.filter((item) => item !== botItem)
-      : [...selectedBot, botItem];
-
-    const isMidChecked = bot[midItem].every((botItem2) =>
-      updatedSelectedBot.includes(botItem2)
-    );
-
-    const isTopChecked = mid.every((midItem2) => {
-      const relatedBots = (bot && bot[midItem2]) || [];
-      return relatedBots.every((botItem) =>
-        updatedSelectedBot.includes(botItem)
-      );
-    });
-
-    setSelectedTop(isTopChecked);
-    setSelectedBot(updatedSelectedBot);
-
-    if (isMidChecked) {
-      setSelectedMid([...selectedMid, midItem]);
-    } else {
-      setSelectedMid(selectedMid.filter((item) => item !== midItem));
-    }
+    const currentBots = selectedBot[midItem] ?? [];
+    const isBotSelected = currentBots.includes(botItem);
+    const updatedBots = isBotSelected
+      ? currentBots.filter((item) => item !== botItem)
+      : [...currentBots, botItem];
+    setSelectedBot({ ...selectedBot, [midItem]: updatedBots }); // selectedBot 상태 업데이트
   };
 
   return (
     <CheckListContainer>
       <CheckListTopContainer>
-        <CheckboxGroup onClick={handleTopCheckboxChange}>
-          <Checkbox checked={selectedTop} />
-        </CheckboxGroup>
-        <CheckItemTextBox onClick={handleTopCheckboxChange}>
+        <CheckItemTextBox>
           <CheckItemText>{top}</CheckItemText>
         </CheckItemTextBox>
         <CheckIconContainer onClick={toggleMidVisibility}>
@@ -105,7 +59,7 @@ const CheckList = ({ top, mid, bot }) => {
             <React.Fragment key={index}>
               <CheckListMiddleItem>
                 <CheckboxGroup onClick={() => handleMidCheckboxChange(item)}>
-                  <Checkbox checked={selectedMid.includes(item)} />
+                  <Checkbox checked={selectedMid === item} />
                 </CheckboxGroup>
                 <CheckItemTextBox onClick={() => handleMidCheckboxChange(item)}>
                   <CheckItemText>{item}</CheckItemText>
@@ -118,13 +72,13 @@ const CheckList = ({ top, mid, bot }) => {
                   </CheckIconContainer>
                 )}
               </CheckListMiddleItem>
-              {visibleBots[item] &&
+              {visibleBots[item] && bot[item] &&
                 bot[item].map((subItem, subIndex) => (
                   <CheckListBottomItem key={subIndex}>
                     <CheckboxGroup
                       onClick={() => handleBotCheckboxChange(item, subItem)}
                     >
-                      <Checkbox checked={selectedBot.includes(subItem)} />
+                      <Checkbox checked={selectedBot[item]?.includes(subItem) ?? false} />
                     </CheckboxGroup>
                     <CheckItemTextBox onClick={() => handleBotCheckboxChange(item, subItem)}>
                       <CheckItemText>{subItem}</CheckItemText>
@@ -139,7 +93,7 @@ const CheckList = ({ top, mid, bot }) => {
   );
 };
 
-export default CheckList;
+export default UploadCheckLlist;
 
 const CheckListContainer = styled.div`
   display: flex;
@@ -219,6 +173,7 @@ const CheckItemTextBox = styled.div`
   align-items: flex-start;
   gap: 0.5rem;
   flex: 1 0 0;
+
   cursor: pointer;
 `;
 

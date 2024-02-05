@@ -57,7 +57,7 @@ const Line = styled.div`
 `;
 
 const ReferenceImg = styled.div`
-  width: 14.3125rem;
+  width: 14.37rem;
   height: 3.3125rem;
-  background: url("/assets/Reference.svg");
-`;
+  background: url("/assets/Reference.png");
+`; 

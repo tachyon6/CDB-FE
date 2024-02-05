@@ -1,18 +1,32 @@
 import React, { useState } from "react";
+import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
-import CheckList from "./list-creator/CheckList";
-import Tag from "./list-creator/Tag";
+import UploadCheckLlist from "../component/admin/UploadCheckList";
+import Tag from "../component/list/list-creator/Tag";
 
-const ListCreator = () => {
+const Admin = () => {
   const [resetKey, setResetKey] = useState(0);
+  const [selectedYear, setSelectedYear] = useState("");
 
   const resetFilters = () => {
     setResetKey((prevKey) => prevKey + 1);
+    setSelectedYear("");
   };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    accept: {
+      "application/pdf": [".pdf"],
+      "image/*": [".png", ".jpg", ".jpeg"],
+    },
+    onDrop: (acceptedFiles) => {
+      console.log(acceptedFiles);
+    },
+  });
+
   return (
     <ListCreatorContainer>
       <ListTitleContainer>
-        <ListTitle>리스트 생성하기</ListTitle>
+        <ListTitle>문항 업로드하기</ListTitle>
       </ListTitleContainer>
       <NavBar>
         <NavItem>수학</NavItem>
@@ -20,9 +34,26 @@ const ListCreator = () => {
             <ResetButtonText>필터 초기화</ResetButtonText>
             </ResetButton>
       </NavBar>
+      <DragDropContainer {...getRootProps()}>
+        <input {...getInputProps()} />
+        <p>파일을 이곳에 끌어다 놓거나 클릭하여 업로드하세요.</p>
+      </DragDropContainer>
+      <YearDropdown>
+        <select
+          value={selectedYear}
+          onChange={(e) => setSelectedYear(e.target.value)}
+        >
+          <option value="">연도 선택</option>
+          {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
+            <option key={year} value={year}>
+              {year}
+            </option>
+          ))}
+        </select>
+      </YearDropdown>
       <Tag key={`tag-${resetKey}`} />
-      <CheckList
-        key={`checklist1-${resetKey}`}
+      <UploadCheckLlist
+        key={`UploadCheckLlist1-${resetKey}`}
         top="단원"
         mid={["수1", "수2", "미적분", "확률과 통계", "기하"]}
         bot={{
@@ -71,35 +102,24 @@ const ListCreator = () => {
           ],
         }}
       />
-      <CheckList
-        key={`checklist2-${resetKey}`}
+      <UploadCheckLlist
+        key={`UploadCheckLlist2-${resetKey}`}
         top="난이도"
         mid={["기본(2, 3점)", "4점 비킬러", "4점 준킬러", "4점 킬러"]}
       />
-      <CheckList
-        key={`checklist4-${resetKey}`}
+      <UploadCheckLlist
+        key={`UploadCheckLlist4-${resetKey}`}
         top="시행월"
-        mid={["6월", "9월", "수능"]}
-      />
-      <CheckList
-        key={`checklist3-${resetKey}`}
-        top="연도"
-        mid={["2022-2024", "2018-2021", "2014-2017", "~2013"]}
-        bot={{
-          "2022-2024": ["2022", "2023", "2024"],
-          "2018-2021": ["2018", "2019", "2020", "2021"],
-          "2014-2017": ["2014", "2015", "2016", "2017"], 
-          "~2013": ["2013 이전"],
-        }}
+        mid={["6월", "9월", "수능(11월)"]}
       />
       <ListButton>
-        <ListButtonText>리스트 생성하기</ListButtonText>
+        <ListButtonText>업로드</ListButtonText>
       </ListButton>
     </ListCreatorContainer>
   );
 };
 
-export default ListCreator;
+export default Admin;
 
 const ListCreatorContainer = styled.div`
   display: flex;
@@ -241,3 +261,47 @@ const ResetButton = styled.button`
   }
 `;
 
+const DragDropContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 160px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: #eeeeee;
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border .24s ease-in-out;
+`;
+
+const YearDropdown = styled.div`
+  margin: 20px 0;
+  width: 100%; 
+  display: flex;
+  justify-content: center;
+
+  select {
+    width: 100%;
+    padding: 10px; 
+    border-radius: 8px; 
+    border: 1px solid #ccc; 
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
+    font-family: "Pretendard Variable";
+    font-size: 1rem;
+    cursor: pointer;
+    text-align: center;
+
+    &:hover {
+      border-color: #888;
+    }
+
+    &:focus {
+      outline: none; 
+      border-color: #4a3aff;
+      box-shadow: 0 0 0 2px rgba(74, 58, 255, 0.2);
+    }
+  }
+`;
