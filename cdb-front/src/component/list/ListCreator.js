@@ -4,7 +4,132 @@ import CheckList from "./list-creator/CheckList";
 import Tag from "./list-creator/Tag";
 
 const ListCreator = () => {
+  const [filters, setFilters] = useState({
+    selectedSections: [],
+    selectedDiffs: [],
+    selectedMonths: [],
+    selectedYears: [],
+    selectedTags: [],
+  });
   const [resetKey, setResetKey] = useState(0);
+
+  const exSections = [
+    {
+      id: 1,
+      unit_id: 1,
+      section: "지수와 로그",
+      unit_name: "수학1",
+    },
+    {
+      id: 2,
+      unit_id: 1,
+      section: "지수함수와 로그함수",
+      unit_name: "수학1",
+    },
+    {
+      id: 3,
+      unit_id: 1,
+      section: "삼각함수",
+      unit_name: "수학1",
+    },
+    {
+      id: 4,
+      unit_id: 1,
+      section: "등차수열과 등비수열",
+      unit_name: "수학1",
+    },
+    {
+      id: 5,
+      unit_id: 1,
+      section: "수열의 합",
+      unit_name: "수학1",
+    },
+    {
+      id: 6,
+      unit_id: 1,
+      section: "수학적 귀납법",
+      unit_name: "수학1",
+    },
+    {
+      id: 7,
+      unit_id: 2,
+      section: "함수의 극한",
+      unit_name: "수학2",
+    },
+    {
+      id: 8,
+      unit_id: 2,
+      section: "함수의 연속",
+      unit_name: "수학2",
+    },
+    {
+      id: 9,
+      unit_id: 2,
+      section: "미분계수",
+      unit_name: "수학2",
+    },
+  ];
+
+  const exDiffs = [
+    {
+      id: 1,
+      name: "2, 3점 기본 문항",
+    },
+    {
+      id: 2,
+      name: "4점 비킬러",
+    },
+    {
+      id: 3,
+      name: "4점 준킬러",
+    },
+    {
+      id: 4,
+      name: "4점 킬러",
+    },
+  ];
+
+  const exMonths = [
+    {
+      id: 1,
+      month: 3,
+    },
+    {
+      id: 2,
+      month: 6,
+    },
+    {
+      id: 3,
+      month: 9,
+    },
+    {
+      id: 4,
+      month: 11,
+    },
+  ];
+
+  const exTags = [
+    {
+      tag_id: 1,
+      name: "지수로그 그래프",
+    },
+    {
+      tag_id: 2,
+      name: "삼각함수 그래프",
+    },
+    {
+      tag_id: 3,
+      name: "여러가지수열",
+    },
+    {
+      tag_id: 4,
+      name: "속도 가속도",
+    },
+    {
+      tag_id: 5,
+      name: "직선의 미분",
+    },
+  ];
 
   const resetFilters = () => {
     setResetKey((prevKey) => prevKey + 1);
@@ -17,8 +142,8 @@ const ListCreator = () => {
       <NavBar>
         <NavItem>수학</NavItem>
         <ResetButton onClick={resetFilters}>
-            <ResetButtonText>필터 초기화</ResetButtonText>
-            </ResetButton>
+          <ResetButtonText>필터 초기화</ResetButtonText>
+        </ResetButton>
       </NavBar>
       <Tag key={`tag-${resetKey}`} />
       <CheckList
@@ -88,10 +213,11 @@ const ListCreator = () => {
         bot={{
           "2022-2024": ["2022", "2023", "2024"],
           "2018-2021": ["2018", "2019", "2020", "2021"],
-          "2014-2017": ["2014", "2015", "2016", "2017"], 
+          "2014-2017": ["2014", "2015", "2016", "2017"],
           "~2013": ["2013 이전"],
         }}
       />
+
       <ListButton>
         <ListButtonText>리스트 생성하기</ListButtonText>
       </ListButton>
@@ -174,14 +300,18 @@ const ListButton = styled.button`
   border: none;
   color: white;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
   &:hover {
     background: var(--Primary, #3829e0);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--Primary-Strong);
+    box-shadow:
+      0 0 0 2px white,
+      0 0 0 4px var(--Primary-Strong);
   }
 
   &:active {
@@ -220,19 +350,23 @@ const ResetButton = styled.button`
   border: 1px solid #ddd;
   border-radius: 5px;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
 
   &:hover {
     cursor: pointer;
     background-color: #4a3aff;
 
     ${ResetButtonText} {
-        color: white;
+      color: white;
     }
   }
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--Primary-Strong);
+    box-shadow:
+      0 0 0 2px white,
+      0 0 0 4px var(--Primary-Strong);
   }
 
   &:active {
@@ -240,4 +374,3 @@ const ResetButton = styled.button`
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
 `;
-
