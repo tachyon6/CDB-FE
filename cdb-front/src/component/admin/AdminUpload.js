@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import { useState } from "react";
+import { useDropzone } from "react-dropzone";
 import styled from "styled-components";
-import CheckList from "./list-creator/CheckList";
-import Tag from "./list-creator/Tag";
+import AdminCheckList from "./AdminCheckList";
+import AdminTag from "./AdminTag";
 
-const ListCreator = ({
+const AdminUpload = ({
   exSections,
   exDiffs,
   exMonths,
@@ -11,16 +12,31 @@ const ListCreator = ({
   exYears,
   onSelectionChange,
   onCreateList,
+  onFileSelect,
 }) => {
   const [resetKey, setResetKey] = useState(0);
+  const [uploadedFile, setUploadedFile] = useState(null);
 
   const resetFilters = () => {
     setResetKey((prevKey) => prevKey + 1);
   };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    ///hwp 파일만 업로드 가능
+    accept: ".hwp",
+    onDrop: (acceptedFiles) => {
+      if (acceptedFiles.length > 0) {
+        onFileSelect(acceptedFiles[0]);
+      }
+      setUploadedFile(acceptedFiles.length > 0 ? acceptedFiles[0] : null);
+    },
+    multiple: false,
+  });
+
   return (
     <ListCreatorContainer>
       <ListTitleContainer>
-        <ListTitle>리스트 생성하기</ListTitle>
+        <ListTitle>문항 업로드하기</ListTitle>
       </ListTitleContainer>
       <NavBar>
         <NavItem>수학</NavItem>
@@ -28,14 +44,21 @@ const ListCreator = ({
           <ResetButtonText>필터 초기화</ResetButtonText>
         </ResetButton>
       </NavBar>
-      <Tag
+      <DragDropContainer {...getRootProps()}>
+        <input {...getInputProps()} />
+        <p>파일을 이곳에 끌어다 놓거나 클릭하여 업로드하세요.</p>
+      </DragDropContainer>
+      {uploadedFile && (
+        <UploadedFileInfo>업로드된 파일: {uploadedFile.name}</UploadedFileInfo>
+      )}
+      <AdminTag
         tags={exTags}
         key={`tag-${resetKey}`}
         selectionChange={(selectedItems) =>
           onSelectionChange("selectedTags", selectedItems)
         }
       />
-      <CheckList
+      <AdminCheckList
         type="단원"
         list={exSections}
         key={`checklist1-${resetKey}`}
@@ -43,7 +66,7 @@ const ListCreator = ({
           onSelectionChange("selectedSections", selectedItems)
         }
       />
-      <CheckList
+      <AdminCheckList
         type="난이도"
         list={exDiffs}
         key={`checklist2-${resetKey}`}
@@ -51,7 +74,7 @@ const ListCreator = ({
           onSelectionChange("selectedDiffs", selectedItems)
         }
       />
-      <CheckList
+      <AdminCheckList
         type="시행월"
         list={exMonths}
         key={`checklist3-${resetKey}`}
@@ -59,7 +82,7 @@ const ListCreator = ({
           onSelectionChange("selectedMonths", selectedItems)
         }
       />
-      <CheckList
+      <AdminCheckList
         type="연도"
         list={exYears}
         key={`checklist4-${resetKey}`}
@@ -67,15 +90,14 @@ const ListCreator = ({
           onSelectionChange("selectedYears", selectedItems)
         }
       />
-
       <ListButton onClick={onCreateList}>
-        <ListButtonText>리스트 생성하기</ListButtonText>
+        <ListButtonText>업로드</ListButtonText>
       </ListButton>
     </ListCreatorContainer>
   );
 };
 
-export default ListCreator;
+export default AdminUpload;
 
 const ListCreatorContainer = styled.div`
   display: flex;
@@ -223,4 +245,24 @@ const ResetButton = styled.button`
     transform: translateY(2px);
     box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   }
+`;
+
+const DragDropContainer = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 40px 160px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: #eeeeee;
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border 0.24s ease-in-out;
+`;
+
+const UploadedFileInfo = styled.div`
+  margin-top: 10px;
 `;

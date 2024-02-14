@@ -1,307 +1,256 @@
-import React, { useState } from "react";
-import { useDropzone } from "react-dropzone";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
-import UploadCheckLlist from "../component/admin/UploadCheckList";
-import Tag from "../component/list/list-creator/Tag";
+import client from "../client";
+import AdminUpload from "../component/admin/AdminUpload";
+import {
+  GET_ALL_DIFF_MATH,
+  GET_ALL_MONTH_MATH,
+  GET_ALL_SUBJECT_MATH,
+  GET_ALL_TAG_MATH,
+} from "../gql/filterItem";
+import AWS from "aws-sdk";
+import { CREATE_QUESTION_MATH } from "../gql/create-question";
+import LoadingSpinner from "../component/admin/LoadingSpinner";
+
+AWS.config.update({
+  accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.REACT_APP_S3_SECRET_ACCESS_KEY,
+  region: process.env.REACT_APP_S3_REGION,
+});
+
+const myBucket = new AWS.S3({
+  params: { Bucket: process.env.REACT_APP_S3_BUCKET },
+  region: process.env.REACT_APP_S3_REGION,
+});
 
 const Admin = () => {
-  const [resetKey, setResetKey] = useState(0);
-  const [selectedYear, setSelectedYear] = useState("");
-
-  const resetFilters = () => {
-    setResetKey((prevKey) => prevKey + 1);
-    setSelectedYear("");
-  };
-
-  const { getRootProps, getInputProps } = useDropzone({
-    accept: {
-      "application/pdf": [".pdf"],
-      "image/*": [".png", ".jpg", ".jpeg"],
+  const [isLoading, setIsLoading] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [subjects, setSubjects] = useState([]);
+  const [diffs, setDiffs] = useState([]);
+  const [months, setMonths] = useState([]);
+  const [tags, setTags] = useState([]);
+  const exYears = [
+    {
+      id: 1,
+      name: "2022-2024",
+      bot: [
+        {
+          id: 1,
+          name: "2024",
+        },
+        {
+          id: 2,
+          name: "2023",
+        },
+        {
+          id: 3,
+          name: "2022",
+        },
+      ],
     },
-    onDrop: (acceptedFiles) => {
-      console.log(acceptedFiles);
+    {
+      id: 2,
+      name: "2019-2021",
+      bot: [
+        {
+          id: 4,
+          name: "2021",
+        },
+        {
+          id: 5,
+          name: "2020",
+        },
+        {
+          id: 6,
+          name: "2019",
+        },
+      ],
     },
+    {
+      id: 3,
+      name: "2016-2018",
+      bot: [
+        {
+          id: 7,
+          name: "2018",
+        },
+        {
+          id: 8,
+          name: "2017",
+        },
+        {
+          id: 9,
+          name: "2016",
+        },
+      ],
+    },
+  ];
+
+  const [selected, setSelected] = useState({
+    selectedSections: [],
+    selectedDiffs: null,
+    selectedMonths: null,
+    selectedTags: [],
+    selectedYears: null,
   });
 
+  useEffect(() => {
+    client
+      .query({
+        query: GET_ALL_SUBJECT_MATH,
+      })
+      .then((res) => {
+        setSubjects(res.data.getAllSubjectMath);
+        console.log(subjects);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    client
+      .query({
+        query: GET_ALL_DIFF_MATH,
+      })
+      .then((res) => {
+        setDiffs(res.data.getAllDiffMath);
+        console.log(diffs);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    client
+      .query({
+        query: GET_ALL_MONTH_MATH,
+      })
+      .then((res) => {
+        setMonths(res.data.getAllMonthMath);
+        console.log(months);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+
+    client
+      .query({
+        query: GET_ALL_TAG_MATH,
+      })
+      .then((res) => {
+        setTags(res.data.getAllTagMath);
+        console.log(tags);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }, []);
+
+  const handleSelectionChange = (type, newSelection) => {
+    setSelected((prevSelected) => ({
+      ...prevSelected,
+      [type]: newSelection,
+    }));
+  };
+
+  const handleFileSelect = (file) => {
+    setSelectedFile(file);
+  };
+
+  const handleCreateList = () => {
+    if (selectedFile) {
+      setIsLoading(true); 
+      const params = {
+        //ACL: "public-read",
+        Body: selectedFile,
+        Bucket: process.env.REACT_APP_S3_BUCKET,
+        Key: `uploads/${selectedFile.name}`,
+      };
+
+      myBucket
+        .putObject(params)
+        .on("httpUploadProgress", (evt) => {
+          console.log(evt);
+          setProgress(Math.round((evt.loaded / evt.total) * 100));
+          setShowAlert(true);
+          setTimeout(() => {
+            setShowAlert(false);
+            setSelectedFile(null);
+          }, 3000);
+        })
+        .send((err) => {
+          if (err) {
+            console.log(err);
+            alert("Error");
+          } else {
+            console.log("Uploaded");
+          console.log(selected);
+          console.log(selected.selectedYears[0]);
+            client
+              .mutate({
+                mutation: CREATE_QUESTION_MATH,
+                variables: {
+                  create_question_math: {
+                    code: selectedFile.name.slice(0, -4),
+                    download_url: `https://cdb-math.s3.ap-northeast-2.amazonaws.com/uploads/${selectedFile.name}`,
+                    year_math_id: selected.selectedYears[0],
+                    month_math_id: selected.selectedMonths,
+                    diff_math_id: selected.selectedDiffs,
+                    section_math_ids: selected.selectedSections,
+                    tag_ids: selected.selectedTags,
+                  },
+                  fetchPolicy: "no-cache",
+                },
+              })
+              .then((res) => {
+                console.log(res);
+                setIsLoading(false);
+                alert(
+                    " code: " +
+                    res.data.createQuestionMath.code +
+                    "가 " +
+                    res.data.createQuestionMath.download_url +
+                    "로 업로드 되었습니다."
+                );
+                window.location.reload();
+              })
+              .catch((err) => {
+                console.log(err);
+                setIsLoading(false);
+                alert("Error");
+                window.location.reload();
+              });
+          }
+        });
+    }
+  };
+
   return (
-    <ListCreatorContainer>
-      <ListTitleContainer>
-        <ListTitle>문항 업로드하기</ListTitle>
-      </ListTitleContainer>
-      <NavBar>
-        <NavItem>수학</NavItem>
-        <ResetButton onClick={resetFilters}>
-            <ResetButtonText>필터 초기화</ResetButtonText>
-            </ResetButton>
-      </NavBar>
-      <DragDropContainer {...getRootProps()}>
-        <input {...getInputProps()} />
-        <p>파일을 이곳에 끌어다 놓거나 클릭하여 업로드하세요.</p>
-      </DragDropContainer>
-      <YearDropdown>
-        <select
-          value={selectedYear}
-          onChange={(e) => setSelectedYear(e.target.value)}
-        >
-          <option value="">연도 선택</option>
-          {Array.from({ length: 30 }, (_, i) => new Date().getFullYear() - i).map((year) => (
-            <option key={year} value={year}>
-              {year}
-            </option>
-          ))}
-        </select>
-      </YearDropdown>
-      <Tag key={`tag-${resetKey}`} />
-      <UploadCheckLlist
-        key={`UploadCheckLlist1-${resetKey}`}
-        top="단원"
-        mid={["수1", "수2", "미적분", "확률과 통계", "기하"]}
-        bot={{
-          수1: [
-            "지수와 로그",
-            "지수함수와 로그함수",
-            "삼각함수",
-            "등차수열과 등비수열",
-            "수열의 합",
-            "수학적 귀납법",
-          ],
-          수2: [
-            "함수의 극한",
-            "함수의 연속",
-            "미분계수",
-            "도함수",
-            "도함수의 활용(수2)",
-            "부정적분",
-            "정적분",
-            "정적분의 활용(수2)",
-          ],
-          미적분: [
-            "수열의 극한",
-            "급수",
-            "여러가지 함수의 미분",
-            "여러 가지 미분법",
-            "도함수의 활용(미적분)",
-            "여러 가지 적분법",
-            "정적분의 활용(미적분)",
-          ],
-          "확률과 통계": [
-            "순열과 조합",
-            "이항정리",
-            "확률의 뜻과 활용",
-            "조건부 확률",
-            "확률분포",
-            "통계적 추정",
-          ],
-          기하: [
-            "이차곡선",
-            "벡터의 연산",
-            "평면벡터의 성분과 내적",
-            "직선과 평면",
-            "정사영",
-            "공간좌표",
-          ],
-        }}
+    <>
+    {isLoading ? <LoadingSpinner /> : (
+    <CardList>
+      <AdminUpload
+        exSections={subjects}
+        exDiffs={diffs}
+        exMonths={months}
+        exTags={tags}
+        exYears={exYears}
+        onSelectionChange={handleSelectionChange}
+        onCreateList={handleCreateList}
+        onFileSelect={handleFileSelect}
       />
-      <UploadCheckLlist
-        key={`UploadCheckLlist2-${resetKey}`}
-        top="난이도"
-        mid={["기본(2, 3점)", "4점 비킬러", "4점 준킬러", "4점 킬러"]}
-      />
-      <UploadCheckLlist
-        key={`UploadCheckLlist4-${resetKey}`}
-        top="시행월"
-        mid={["6월", "9월", "수능(11월)"]}
-      />
-      <ListButton>
-        <ListButtonText>업로드</ListButtonText>
-      </ListButton>
-    </ListCreatorContainer>
+    </CardList>
+    )}
+    </>
   );
 };
 
 export default Admin;
 
-const ListCreatorContainer = styled.div`
-  display: flex;
-  width: 51.125rem;
-  padding: var(--Lg, 1.5rem);
-  flex-direction: column;
-  align-items: center;
-  gap: var(--Lg, 1.5rem);
-
-  border-radius: 1.5rem;
-  background: var(--Grayscale-000, #fff);
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
-  box-sizing: border-box;
-`;
-
-const ListTitleContainer = styled.div`
+const CardList = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 0.25rem;
-  align-self: stretch;
-`;
-
-const ListTitle = styled.div`
-  align-self: stretch;
-  color: var(--Grayscale-700, #170f49);
-  text-align: center;
-
-  /* H4/Bold */
-  font-family: "Pretendard Variable";
-  font-size: 2rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: -0.02rem;
-`;
-
-const NavBar = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  align-self: stretch;
-  border-bottom: 1px solid var(--Grayscale-300, #d9dbe9);
-`;
-
-const NavItem = styled.div`
-  display: flex;
-  padding: 0.75rem 1rem;
-  align-items: flex-start;
-  border-bottom: 2px solid var(--Primary-Strong, #4a3aff);
-  color: var(--Primary-Strong, #4a3aff);
-
-  /* Body1/Regular */
-  font-family: "Pretendard Variable";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-  letter-spacing: -0.01rem;
-`;
-
-const ListButton = styled.button`
-  display: flex;
-  padding: 1rem 1.5rem;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  align-self: stretch;
-
-  border-radius: 0.5rem;
-  background: var(--Primary-Strong, #4a3aff);
-  border: none;
-  color: white;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-  &:hover {
-    background: var(--Primary, #3829e0);
-  }
-
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--Primary-Strong);
-  }
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  }
-`;
-
-const ListButtonText = styled.div`
-  color: var(--Grayscale-000, #fff);
-
-  /* Body1/Bold */
-  font-family: "Pretendard Variable";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  letter-spacing: -0.01rem;
-`;
-
-const ResetButtonText = styled.div`
-  color: var(--Grayscale-400, #a0a3bd);
-
-  /* Body2/Regular */
-  font-family: "Pretendard Variable";
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 600;
-  line-height: normal;
-  letter-spacing: -0.00875rem;
-`;
-
-const ResetButton = styled.button`
-  padding: 0.5rem 1rem;
-  background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
-
-  &:hover {
-    cursor: pointer;
-    background-color: #4a3aff;
-
-    ${ResetButtonText} {
-        color: white;
-    }
-  }
-  &:focus {
-    outline: none;
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--Primary-Strong);
-  }
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
-  }
-`;
-
-const DragDropContainer = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 40px 160px;
-  border-width: 2px;
-  border-radius: 2px;
-  border-color: #eeeeee;
-  border-style: dashed;
-  background-color: #fafafa;
-  color: #bdbdbd;
-  outline: none;
-  transition: border .24s ease-in-out;
-`;
-
-const YearDropdown = styled.div`
-  margin: 20px 0;
-  width: 100%; 
-  display: flex;
-  justify-content: center;
-
-  select {
-    width: 100%;
-    padding: 10px; 
-    border-radius: 8px; 
-    border: 1px solid #ccc; 
-    box-shadow: 0 2px 4px rgba(0,0,0,0.1); 
-    font-family: "Pretendard Variable";
-    font-size: 1rem;
-    cursor: pointer;
-    text-align: center;
-
-    &:hover {
-      border-color: #888;
-    }
-
-    &:focus {
-      outline: none; 
-      border-color: #4a3aff;
-      box-shadow: 0 0 0 2px rgba(74, 58, 255, 0.2);
-    }
-  }
+  gap: 1rem;
 `;

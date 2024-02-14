@@ -1,50 +1,70 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-
-const UploadCheckLlist = ({ top, mid, bot }) => {
+const AdminCheckList = ({ type, list, selectionChange }) => {
   const [isVisibleMid, setIsVisibleMid] = useState(true);
   const [visibleBots, setVisibleBots] = useState({});
-  const [selectedMid, setSelectedMid] = useState(null); // 배열에서 단일 값으로 변경
-  const [selectedBot, setSelectedBot] = useState({}); // 선택된 mid에 대한 bot을 저장하기 위해 객체로 변경
+  const [selectedMid, setSelectedMid] = useState(null);
+  const [selectedBot, setSelectedBot] = useState([]);
+
+  useEffect(() => {
+    if(type === "단원"){
+      selectionChange(selectedBot);
+    } else if(type === "연도") {
+      selectionChange(selectedBot);
+    } else if(type === "난이도") {
+      selectionChange(selectedMid);
+    } else if(type === "시행월") {
+      selectionChange(selectedMid);
+    }
+  }, [selectedMid, selectedBot]);
 
   const toggleMidVisibility = () => {
     setIsVisibleMid(!isVisibleMid);
   };
 
-  const toggleBotVisibility = (item) => {
-    setVisibleBots((prev) => ({ ...prev, [item]: !prev[item] }));
+  const toggleBotVisibility = (midId) => {
+    setVisibleBots((prev) => ({ ...prev, [midId]: !prev[midId] }));
   };
 
 
-  const handleMidCheckboxChange = (item) => {
-    const resetBots = Object.keys(selectedBot).reduce((acc, key) => {
-        // 새로 선택한 mid에 대해서만 bot 배열을 유지하고, 나머지는 빈 배열로 초기화
-        acc[key] = key === item ? selectedBot[key] : [];
-        return acc;
+  // Handle mid checkbox change
+  const handleMidCheckboxChange = (midId) => {
+    if (selectedMid === midId) {
+    setSelectedMid(null);
+    setSelectedBot([]);
+    setVisibleBots({});
+  } else {
+    setSelectedMid(midId);
+    setSelectedBot([]);
+    const newVisibleBots = Object.keys(visibleBots).reduce((acc, key) => {
+      acc[key] = false;
+      return acc;
     }, {});
-
-    setSelectedBot(resetBots);
-    setSelectedMid(item); // 선택된 mid를 업데이트
+    newVisibleBots[midId] = true;
+    setVisibleBots(newVisibleBots);
+  }
   };
 
-  const handleBotCheckboxChange = (midItem, botItem) => {
-    // midItem이 현재 선택된 mid가 아니면 함수 종료
-    if (midItem !== selectedMid) return;
-
-    const currentBots = selectedBot[midItem] ?? [];
-    const isBotSelected = currentBots.includes(botItem);
-    const updatedBots = isBotSelected
-      ? currentBots.filter((item) => item !== botItem)
-      : [...currentBots, botItem];
-    setSelectedBot({ ...selectedBot, [midItem]: updatedBots }); // selectedBot 상태 업데이트
+  // Handle bot checkbox change
+  const handleBotCheckboxChange = (midId, botId) => {
+    if (type === "연도") {
+      setSelectedBot([botId]);
+    } else {
+      // 기존에 선택된 botId가 있다면 제거, 없다면 추가
+      if (selectedBot.includes(botId)) {
+        setSelectedBot(selectedBot.filter(id => id !== botId));
+      } else if (selectedMid === midId) {
+        setSelectedBot([...selectedBot, botId]);
+      }
+    }
   };
 
   return (
     <CheckListContainer>
       <CheckListTopContainer>
         <CheckItemTextBox>
-          <CheckItemText>{top}</CheckItemText>
+          <CheckItemText>{type}</CheckItemText>
         </CheckItemTextBox>
         <CheckIconContainer onClick={toggleMidVisibility}>
           <CheckIcon>
@@ -55,33 +75,46 @@ const UploadCheckLlist = ({ top, mid, bot }) => {
       <CheckLine />
       {isVisibleMid && (
         <CheckListMiddleContainer>
-          {mid.map((item, index) => (
-            <React.Fragment key={index}>
+          {list.map((midItem) => (
+            <React.Fragment key={midItem.id}>
               <CheckListMiddleItem>
-                <CheckboxGroup onClick={() => handleMidCheckboxChange(item)}>
-                  <Checkbox checked={selectedMid === item} />
+                <CheckboxGroup
+                  onClick={() => handleMidCheckboxChange(midItem.id)}
+                >
+                  <Checkbox checked={selectedMid == midItem.id} />
                 </CheckboxGroup>
-                <CheckItemTextBox onClick={() => handleMidCheckboxChange(item)}>
-                  <CheckItemText>{item}</CheckItemText>
+                <CheckItemTextBox onClick={() => handleMidCheckboxChange(midItem.id)}>
+                  <CheckItemText>{midItem.name}</CheckItemText>
                 </CheckItemTextBox>
-                {bot && bot[item] && (
-                  <CheckIconContainer onClick={() => toggleBotVisibility(item)}>
+                {midItem.bot && (
+                  <CheckIconContainer
+                    onClick={() => toggleBotVisibility(midItem.id)}
+                  >
                     <CheckIcon>
-                      {visibleBots[item] ? <CheckUpSvg /> : <CheckDownSvg />}
+                      {visibleBots[midItem.id] ? (
+                        <CheckUpSvg />
+                      ) : (
+                        <CheckDownSvg />
+                      )}
                     </CheckIcon>
                   </CheckIconContainer>
                 )}
               </CheckListMiddleItem>
-              {visibleBots[item] && bot[item] &&
-                bot[item].map((subItem, subIndex) => (
-                  <CheckListBottomItem key={subIndex}>
+              {visibleBots[midItem.id] &&
+              midItem.bot &&
+                midItem.bot.map((botItem) => (
+                  <CheckListBottomItem key={botItem.id}>
                     <CheckboxGroup
-                      onClick={() => handleBotCheckboxChange(item, subItem)}
+                      onClick={() =>
+                        handleBotCheckboxChange(midItem.id, botItem.id)
+                      }
                     >
-                      <Checkbox checked={selectedBot[item]?.includes(subItem) ?? false} />
+                      <Checkbox checked={selectedBot.includes(botItem.id)} />
                     </CheckboxGroup>
-                    <CheckItemTextBox onClick={() => handleBotCheckboxChange(item, subItem)}>
-                      <CheckItemText>{subItem}</CheckItemText>
+                    <CheckItemTextBox onClick={() =>
+                        handleBotCheckboxChange(midItem.id, botItem.id)
+                      }>
+                    <CheckItemText>{botItem.name}</CheckItemText>
                     </CheckItemTextBox>
                   </CheckListBottomItem>
                 ))}
@@ -93,7 +126,7 @@ const UploadCheckLlist = ({ top, mid, bot }) => {
   );
 };
 
-export default UploadCheckLlist;
+export default AdminCheckList;
 
 const CheckListContainer = styled.div`
   display: flex;
@@ -173,7 +206,6 @@ const CheckItemTextBox = styled.div`
   align-items: flex-start;
   gap: 0.5rem;
   flex: 1 0 0;
-
   cursor: pointer;
 `;
 
@@ -215,8 +247,8 @@ const CheckUpSvg = () => {
       fill="none"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M21.7317 15.3246C21.662 15.3944 21.5793 15.4498 21.4881 15.4877C21.397 15.5255 21.2993 15.5449 21.2007 15.5449C21.102 15.5449 21.0044 15.5255 20.9132 15.4877C20.8221 15.4498 20.7394 15.3944 20.6697 15.3246L12.2007 6.85408L3.73169 15.3246C3.66195 15.3943 3.57917 15.4496 3.48806 15.4874C3.39695 15.5251 3.2993 15.5445 3.20069 15.5445C3.10207 15.5445 3.00442 15.5251 2.91331 15.4874C2.8222 15.4496 2.73942 15.3943 2.66969 15.3246C2.59995 15.2548 2.54464 15.1721 2.5069 15.081C2.46916 14.9898 2.44974 14.8922 2.44974 14.7936C2.44974 14.695 2.46916 14.5973 2.5069 14.5062C2.54464 14.4151 2.59995 14.3323 2.66969 14.2626L11.6697 5.26258C11.7394 5.19274 11.8221 5.13732 11.9132 5.09951C12.0044 5.0617 12.102 5.04224 12.2007 5.04224C12.2993 5.04224 12.397 5.0617 12.4881 5.09951C12.5793 5.13732 12.662 5.19274 12.7317 5.26258L21.7317 14.2626C21.8015 14.3322 21.8569 14.415 21.8948 14.5061C21.9326 14.5972 21.952 14.6949 21.952 14.7936C21.952 14.8922 21.9326 14.9899 21.8948 15.081C21.8569 15.1721 21.8015 15.2549 21.7317 15.3246V15.3246Z"
         fill="black"
       />
@@ -234,8 +266,8 @@ const CheckDownSvg = () => {
       fill="none"
     >
       <path
-        fill-rule="evenodd"
-        clip-rule="evenodd"
+        fillRule="evenodd"
+        clipRule="evenodd"
         d="M2.46888 4.96888C2.53854 4.89903 2.62131 4.84362 2.71243 4.80581C2.80354 4.768 2.90122 4.74854 2.99988 4.74854C3.09853 4.74854 3.19621 4.768 3.28733 4.80581C3.37844 4.84362 3.46121 4.89903 3.53088 4.96888L11.9999 13.4394L20.4689 4.96888C20.5386 4.89914 20.6214 4.84383 20.7125 4.80609C20.8036 4.76835 20.9013 4.74893 20.9999 4.74893C21.0985 4.74893 21.1961 4.76835 21.2873 4.80609C21.3784 4.84383 21.4611 4.89914 21.5309 4.96888C21.6006 5.03861 21.6559 5.12139 21.6937 5.2125C21.7314 5.30361 21.7508 5.40126 21.7508 5.49988C21.7508 5.59849 21.7314 5.69614 21.6937 5.78725C21.6559 5.87836 21.6006 5.96114 21.5309 6.03088L12.5309 15.0309C12.4612 15.1007 12.3784 15.1561 12.2873 15.1939C12.1962 15.2318 12.0985 15.2512 11.9999 15.2512C11.9012 15.2512 11.8035 15.2318 11.7124 15.1939C11.6213 15.1561 11.5385 15.1007 11.4689 15.0309L2.46888 6.03088C2.39903 5.96121 2.34362 5.87844 2.30581 5.78733C2.268 5.69621 2.24854 5.59853 2.24854 5.49988C2.24854 5.40122 2.268 5.30354 2.30581 5.21243C2.34362 5.12131 2.39903 5.03854 2.46888 4.96888V4.96888Z"
         fill="black"
       />

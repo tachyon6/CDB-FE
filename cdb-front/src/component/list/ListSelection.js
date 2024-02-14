@@ -1,10 +1,22 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import styled from "styled-components";
-import List from "../../page/List";
 
-const ListSelection = () => {
+const ListSelection = forwardRef(({ list }, ref) => {
+
+  const handleCopy = () => {
+    const textToCopy = list.join(" "); // 리스트 항목을 공백으로 구분하여 하나의 문자열로 합침
+    navigator.clipboard
+      .writeText(textToCopy)
+      .then(() => {
+        alert("리스트가 클립보드에 복사되었습니다."); // 성공 메시지 표시 (선택사항)
+      })
+      .catch((err) => {
+        console.error("클립보드 복사에 실패했습니다.", err);
+      });
+  };
+
   return (
-    <ListSelectionContainer>
+    <ListSelectionContainer ref={ref}>
       <SelectionTitleContainer>
         <SelectionTitleBox>
           <SelectionTitle>리스트 복사하기</SelectionTitle>
@@ -18,16 +30,14 @@ const ListSelection = () => {
       </SelectionTitleContainer>
       <SelectionItemContainer>
         <ListSelectionTitle>문제 리스트</ListSelectionTitle>
-        <ListSelectionItem>
-          231130B, 201130A, 201129A, 191130A
-        </ListSelectionItem>
+        <ListSelectionItem>{list.map((item) => item + " ")}</ListSelectionItem>
       </SelectionItemContainer>
-      <ListSelectionButton>
+      <ListSelectionButton onClick={handleCopy}>
         <ListSelectionButtonText>복사하기</ListSelectionButtonText>
       </ListSelectionButton>
     </ListSelectionContainer>
   );
-};
+});
 
 export default ListSelection;
 
@@ -149,14 +159,18 @@ const ListSelectionButton = styled.button`
   background: var(--Primary-Strong, #4a3aff);
   border: none;
   cursor: pointer;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
   &:hover {
     background: var(--Primary, #3829e0);
   }
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px white, 0 0 0 4px var(--Primary-Strong);
+    box-shadow:
+      0 0 0 2px white,
+      0 0 0 4px var(--Primary-Strong);
   }
 
   &:active {

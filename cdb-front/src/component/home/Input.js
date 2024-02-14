@@ -15,12 +15,11 @@ const Input = () => {
         </InputField1>
         <InputField2>
           <InputText2>
-            필요한 기출 문제의 번호들을 입력하거나, 상단의 리스트 생성을 통해
-            복사한 값을 붙여넣어주세요.
+            필요한 기출 문제의 번호들을 공백을 기준으로 구분하여 입력해주세요.
           </InputText2>
           <Input2Box>
             <Input2Container>
-              <Input2 placeholder="Ex) 211109A, 221130B, 230622"></Input2>
+              <Input2 placeholder="Ex) 211109A 221130B 230622"></Input2>
             </Input2Container>
             <Input2Button>PDF로 다운받기</Input2Button>
           </Input2Box>

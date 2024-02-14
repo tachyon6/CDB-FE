@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled, {css} from "styled-components";
 
-const Tag = ({tags, selectionChange}) => {
+const AdminTag = ({tags, selectionChange}) => {
     const [selectedTags, setSelectedTags] = useState([]);
 
     useEffect(() => {
@@ -40,7 +40,7 @@ const Tag = ({tags, selectionChange}) => {
     );
 };
 
-export default Tag;
+export default AdminTag;
 
 const TagContainer = styled.div`
   display: flex;
