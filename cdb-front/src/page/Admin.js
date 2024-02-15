@@ -26,8 +26,6 @@ const myBucket = new AWS.S3({
 const Admin = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
-  const [showAlert, setShowAlert] = useState(false);
-  const [progress, setProgress] = useState(0);
   const [subjects, setSubjects] = useState([]);
   const [diffs, setDiffs] = useState([]);
   const [months, setMonths] = useState([]);
@@ -91,6 +89,7 @@ const Admin = () => {
 
   const [selected, setSelected] = useState({
     selectedSections: [],
+    selectedAnswer: "",
     selectedDiffs: null,
     selectedMonths: null,
     selectedTags: [],
@@ -172,12 +171,6 @@ const Admin = () => {
         .putObject(params)
         .on("httpUploadProgress", (evt) => {
           console.log(evt);
-          setProgress(Math.round((evt.loaded / evt.total) * 100));
-          setShowAlert(true);
-          setTimeout(() => {
-            setShowAlert(false);
-            setSelectedFile(null);
-          }, 3000);
         })
         .send((err) => {
           if (err) {
@@ -193,6 +186,7 @@ const Admin = () => {
                 variables: {
                   create_question_math: {
                     code: selectedFile.name.slice(0, -4),
+                    answer: selected.selectedAnswer,
                     download_url: `https://cdb-math.s3.ap-northeast-2.amazonaws.com/uploads/${selectedFile.name}`,
                     year_math_id: selected.selectedYears[0],
                     month_math_id: selected.selectedMonths,

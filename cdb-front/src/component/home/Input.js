@@ -1,7 +1,98 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "styled-components";
+import { CREATE_COMPLETE_FILE } from "../../gql/create-complete";
+import client from "../../client";
+import AWS from "aws-sdk";
+import { IoIosSync } from 'react-icons/io';
+
 
 const Input = () => {
+  const [inputTitle, setInputTitle] = useState("2025학년도 대학수학능력시험 대비 문제지");
+  const [inputCodes, setInputCodes] = useState("");
+  const [isDownloading, setIsDownloading] = useState(false);
+
+  const accessKeyId = process.env.REACT_APP_S3_ACCESS_KEY_ID;
+  const secretAccessKey = process.env.REACT_APP_S3_SECRET_ACCESS_KEY;
+  const region = process.env.REACT_APP_S3_REGION;
+
+  AWS.config.update({
+    accessKeyId: accessKeyId,
+    secretAccessKey: secretAccessKey,
+    region: region,
+  });
+
+  const handleDownloadPdf = (title, codes) => {
+    if(title === "") {
+      title = "2025학년도 대학수학능력시험 대비 문제지";
+    }
+    setIsDownloading(true);
+    const codeArr = codes.split(" ");
+
+    if (codeArr.length === 0) {
+      alert("문제 번호들을 입력해주세요.");
+      return;
+    } else if (codeArr.length > 200) {
+      alert("200개 이하의 문제 번호들을 입력해주세요.");
+      return;
+    }
+
+    client
+      .mutate({
+        mutation: CREATE_COMPLETE_FILE,
+        variables: {
+          complete_file_input: {
+            file_name: title,
+            question_codes: codeArr,
+          },
+        },
+        fetchPolicy: "no-cache",
+      })
+      .then(async (res) => {
+        console.log(res);
+        const fileName = await res.data.combine;
+        const s3 = new AWS.S3();
+        const params = {
+          Bucket: process.env.REACT_APP_S3_BUCKET,
+          Key: `uploads/results/${fileName}.pdf`,
+        };
+
+        s3.getObject(params, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            const blob = new Blob([data.Body], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `${title}.pdf`;
+            link.click();
+          }
+        });
+
+        const params2 = {
+          Bucket: process.env.REACT_APP_S3_BUCKET,
+          Key: `uploads/results_ans/${fileName}.pdf`,
+        };
+
+        s3.getObject(params2, (err, data) => {
+          if (err) {
+            console.log(err);
+          } else {
+            const blob = new Blob([data.Body], { type: "application/pdf" });
+            const link = document.createElement("a");
+            link.href = window.URL.createObjectURL(blob);
+            link.download = `${title}_정답.pdf`;
+            link.click();
+          }
+        });
+      })
+      .catch((err) => {
+        console.log(err);
+        alert(err.message);
+      })
+      .finally(() => {
+        setIsDownloading(false); 
+      });
+  }
   return (
     <MainContainer>
       <InputHeader>
@@ -11,7 +102,10 @@ const Input = () => {
         <InputField1>
           <InputText1> 시험지 상단에 표기될 제목을 입력해주세요. (미입력시 기본문구로 출력됩니다.)</InputText1>
 
-          <Input1 placeholder="2025학년도 대학수학능력시험 대비 문제지"></Input1>
+          <Input1 placeholder="2025학년도 대학수학능력시험 대비 문제지"
+            value={inputTitle}
+            onChange={(e) => setInputTitle(e.target.value)}
+          ></Input1>
         </InputField1>
         <InputField2>
           <InputText2>
@@ -19,9 +113,14 @@ const Input = () => {
           </InputText2>
           <Input2Box>
             <Input2Container>
-              <Input2 placeholder="Ex) 211109A 221130B 230622"></Input2>
+              <Input2 placeholder="Ex) 211109A 221130B 230622"
+                value={inputCodes}
+                onChange={(e) => setInputCodes(e.target.value)}
+              ></Input2>
             </Input2Container>
-            <Input2Button>PDF로 다운받기</Input2Button>
+            <Input2Button onClick={() => handleDownloadPdf(inputTitle, inputCodes)}>
+        {isDownloading ? <IoIosSync className="loading-icon" /> : 'PDF로 다운받기'}
+      </Input2Button>
           </Input2Box>
         </InputField2>
         <Caption1>
@@ -228,6 +327,15 @@ const Input2Button = styled.button`
     transform: scale(0.95);
     background: #6A5ACD;
   }
+
+  .loading-icon {
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
 `;
 
 const Caption1 = styled.div`
@@ -277,3 +385,4 @@ const Caption2 = styled.div`
   line-height: normal;
   letter-spacing: -0.0075rem;
 `;
+

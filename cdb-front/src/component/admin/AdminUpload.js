@@ -16,6 +16,7 @@ const AdminUpload = ({
 }) => {
   const [resetKey, setResetKey] = useState(0);
   const [uploadedFile, setUploadedFile] = useState(null);
+  const [inputAnswer, setInputAnswer] = useState("");
 
   const resetFilters = () => {
     setResetKey((prevKey) => prevKey + 1);
@@ -51,6 +52,11 @@ const AdminUpload = ({
       {uploadedFile && (
         <UploadedFileInfo>업로드된 파일: {uploadedFile.name}</UploadedFileInfo>
       )}
+      정답 <Input1 type="text" value={inputAnswer} onChange={(e) => {
+        setInputAnswer(e.target.value);
+        onSelectionChange("selectedAnswer", e.target.value);
+      }
+      } />
       <AdminTag
         tags={exTags}
         key={`tag-${resetKey}`}
@@ -98,6 +104,17 @@ const AdminUpload = ({
 };
 
 export default AdminUpload;
+
+const Input1 = styled.input`
+  display: flex;
+  padding: 0.5625rem 1rem;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: stretch;
+  border-radius: 0.375rem;
+  border: 1px solid var(--Gray-300, #dee2e6);
+  background: var(--Default-White, #fff);
+`;
 
 const ListCreatorContainer = styled.div`
   display: flex;
