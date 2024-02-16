@@ -22,7 +22,7 @@ const Input = () => {
   });
 
   const handleDownloadPdf = (title, codes) => {
-    if(title === "") {
+    if (title === "") {
       title = "2025학년도 대학수학능력시험 대비 문제지";
     }
     setIsDownloading(true);
@@ -90,7 +90,7 @@ const Input = () => {
         alert(err.message);
       })
       .finally(() => {
-        setIsDownloading(false); 
+        setIsDownloading(false);
       });
   }
   return (
@@ -119,8 +119,8 @@ const Input = () => {
               ></Input2>
             </Input2Container>
             <Input2Button onClick={() => handleDownloadPdf(inputTitle, inputCodes)} disabled={isDownloading}>
-        {isDownloading ? <IoIosSync className="loading-icon" /> : 'PDF로 다운받기'}
-      </Input2Button>
+              {isDownloading ? <IoIosSync className="loading-icon" /> : 'PDF로 다운받기'}
+            </Input2Button>
           </Input2Box>
         </InputField2>
         <Caption1>
@@ -163,10 +163,10 @@ export const MainContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 3rem;
-  border: 2px solid var(--Gray-300, #ddd);
+  border: 1px solid var(--Gray-300, #ddd);
   border-radius: 1.5rem;
   background: var(--Grayscale-000, #fff);
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
 `;
 

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import AdminCheckList from "./AdminCheckList";
 import AdminTag from "./AdminTag";
 
-const AdminUpload = ({
+const AdminUploadModule = ({
   exSections,
   exDiffs,
   exMonths,
@@ -103,7 +103,7 @@ const AdminUpload = ({
   );
 };
 
-export default AdminUpload;
+export default AdminUploadModule;
 
 const Input1 = styled.input`
   display: flex;

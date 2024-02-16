@@ -18,6 +18,10 @@ const Header = () => {
     return location.pathname === path;
   };
 
+  const handleAdminClick = () => {
+    navigate("/admin");
+  }
+
   return (
     <HeaderContainer>
       <Logo onClick={handleHomeClick} />
@@ -28,6 +32,7 @@ const Header = () => {
         <Nav onClick={handleListClick} active={isActive("/list")}>
           리스트 생성하기
         </Nav>
+        {localStorage.getItem("accessToken") ? <AdminHeader onClick={handleAdminClick} >관리자페이지</AdminHeader> : null}
       </NavContainer>
       <RightSpace />
     </HeaderContainer>
@@ -90,4 +95,28 @@ const RightSpace = styled.div`
   height: 2.5rem;
   align-items: flex-start;
   flex-shrink: 0;
+`;
+
+const AdminHeader = styled.button`
+  display: flex;
+  padding: 0.5rem 1rem;
+  align-items: flex-start;
+
+  font-family: "Pretendard Variable";
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: -0.01rem;
+
+  border-radius: 0.5rem;
+  background: #fff;
+  color: #000;
+  border: 2px solid #000;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  &:hover {
+    color: #0064ff;
+    border: 2px solid #0064ff;
+  }
 `;
