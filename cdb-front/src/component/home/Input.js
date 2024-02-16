@@ -118,7 +118,7 @@ const Input = () => {
                 onChange={(e) => setInputCodes(e.target.value)}
               ></Input2>
             </Input2Container>
-            <Input2Button onClick={() => handleDownloadPdf(inputTitle, inputCodes)}>
+            <Input2Button onClick={() => handleDownloadPdf(inputTitle, inputCodes)} disabled={isDownloading}>
         {isDownloading ? <IoIosSync className="loading-icon" /> : 'PDF로 다운받기'}
       </Input2Button>
           </Input2Box>
@@ -126,6 +126,9 @@ const Input = () => {
         <Caption1>
           문제 번호 입렵 방법 )
           <CaptionFrameContainer>
+            <CaptionFrame>
+              2024학년도 + 9월 + 15번 + 공통 → 240915
+            </CaptionFrame>
             <CaptionFrame>
               2023학년도 + 6월 + 30번 + 미적분 → 230630B
             </CaptionFrame>
@@ -138,9 +141,9 @@ const Input = () => {
           참고 사항 )
           <CaptionFrameContainer>
             <CaptionFrame>A형 → A / B형 → B (2012~2016학년도)</CaptionFrame>
-            <CaptionFrame>가형 → A / 나형 → B (2017~2020학년도)</CaptionFrame>
+            <CaptionFrame>가형 → A / 나형 → B (2017~2021학년도)</CaptionFrame>
             <CaptionFrame>
-              확통 → A / 미적분 → B / 기하 → C (2021~2024학년도)
+              확통 → A / 미적분 → B / 기하 → C (2022~2024학년도)
             </CaptionFrame>
             <CaptionFrame>공통 문항 → 없음</CaptionFrame>
           </CaptionFrameContainer>
@@ -160,9 +163,10 @@ export const MainContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 3rem;
+  border: 2px solid var(--Gray-300, #ddd);
   border-radius: 1.5rem;
   background: var(--Grayscale-000, #fff);
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.2);
   box-sizing: border-box;
 `;
 
@@ -335,6 +339,12 @@ const Input2Button = styled.button`
   @keyframes spin {
     0% { transform: rotate(0deg); }
     100% { transform: rotate(360deg); }
+  }
+
+  &:disabled {
+    background: var(--Grayscale-300, #d9dbe9);
+    color: var(--Grayscale-600, #6F6C8F);
+    cursor: not-allowed;
   }
 `;
 
