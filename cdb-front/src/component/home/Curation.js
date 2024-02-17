@@ -160,7 +160,7 @@ const CurationList = styled.div`
 
 const CurationListNum = styled.h5`
   display: flex;
-  width: 4.1875rem;
+  width: 5rem;
   padding: 0.5rem 0rem;
   flex-direction: column;
   align-items: center;

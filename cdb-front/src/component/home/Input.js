@@ -4,10 +4,11 @@ import { CREATE_COMPLETE_FILE } from "../../gql/create-complete";
 import client from "../../client";
 import AWS from "aws-sdk";
 import { IoIosSync } from 'react-icons/io';
+import { CREATE_DOWNLOAD_LOG } from "../../gql/create-download-log";
 
 
 const Input = () => {
-  const [inputTitle, setInputTitle] = useState("2025학년도 대학수학능력시험 대비 문제지");
+  const [inputTitle, setInputTitle] = useState("");
   const [inputCodes, setInputCodes] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
 
@@ -35,6 +36,24 @@ const Input = () => {
       alert("200개 이하의 문제 번호들을 입력해주세요.");
       return;
     }
+
+    client
+      .mutate({
+        mutation: CREATE_DOWNLOAD_LOG,
+        variables: {
+          title: title,
+          input: codes,
+        },
+        fetchPolicy: "no-cache",
+      })
+      .then((res) => {
+        console.log(res);
+      }
+      )
+      .catch((err) => {
+        console.log(err);
+        alert(err.message);
+      });
 
     client
       .mutate({
