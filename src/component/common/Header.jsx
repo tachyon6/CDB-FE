@@ -65,6 +65,12 @@ const Logo = styled.div`
   height: 2.5rem;
   background: url("/assets/Original 1.svg") no-repeat center/contain;
   cursor: pointer;
+
+  @media (max-width: 768px) {
+    width: 6.5rem;
+    height: 2rem;
+  }
+
 `;
 
 const NavContainer = styled.div`
