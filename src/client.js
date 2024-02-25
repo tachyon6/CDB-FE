@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 
-const SERVER_URL = "https://quark-api.tachyon6.com/graphql";
+export const SERVER_URL = "https://quark-api.tachyon6.com/graphql";
 
 const DEV_SERVER_URL = "http://localhost:8080/graphql";
 
