@@ -41,4 +41,5 @@ const DefaultPage = styled.div`
   align-items: center;
   gap: 1rem;
   background: var(--Grayscale-200, #D6D7DE);
+  box-sizing: border-box;
 `;

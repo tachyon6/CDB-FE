@@ -43,3 +43,8 @@
   font-weight: 400 700;
   font-style: normal;
 }
+
+body {
+  width: 100%;
+  overflow-x: hidden;
+}

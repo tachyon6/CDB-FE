@@ -3,7 +3,7 @@ import styled from "styled-components";
 import client from "../../client";
 import { GET_ALL_CURATION } from "../../gql/curationList";
 
-const CurationItems = (Header, Title, list) => {
+const CurationItems = (Id, Header, Title, list) => {
   const listLength = list.split(" ").length;
   const handleCopyList = () => {
     navigator.clipboard.writeText(list)
@@ -12,7 +12,7 @@ const CurationItems = (Header, Title, list) => {
   };
 
   return (
-    <CurationList>
+    <CurationList key={Id}>
       <CurationListNum>
         <CurationListNumText>{Header}</CurationListNumText>
       </CurationListNum>
@@ -63,7 +63,7 @@ const Curation = () => {
       </CurationTitleContainer>
       <Line />
       {curations.map((curation) => {
-        return CurationItems(curation.subject, curation.name, curation.list);
+        return CurationItems(curation.id, curation.subject, curation.name, curation.list);
       })}
     </CurationContainer>
   );
