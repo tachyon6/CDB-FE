@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CREATE_COMPLETE_FILE } from "../../gql/create-complete";
-import client, { SERVER_URL } from "../../client";
+import client from "../../client";
 import AWS from "aws-sdk";
 import { IoIosSync } from "react-icons/io";
 import { CREATE_DOWNLOAD_LOG } from "../../gql/create-download-log";
@@ -25,7 +25,7 @@ const Input = () => {
   });
 
   useEffect(() => {
-    const socket = io(SERVER_URL);
+    const socket = io("https://quark-api.tachyon6.com");
     socket.on("connect", () => {
       console.log("Socket connected");
     });
