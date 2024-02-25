@@ -280,6 +280,10 @@ const CheckLine = styled.div`
   height: 0.0625rem;
 
   background: var(--Grayscale-700, #170f49);
+
+   @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const CheckListMiddleContainer = styled.div`

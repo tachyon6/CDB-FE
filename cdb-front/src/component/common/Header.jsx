@@ -50,6 +50,14 @@ const HeaderContainer = styled.header`
   gap: 3rem;
   background: var(--Grayscale-000, #fff);
   box-sizing: border-box; 
+  border: none;
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    justify-content: space-between;
+    gap: 0;
+  }
+
 `;
 
 const Logo = styled.div`
@@ -64,6 +72,10 @@ const NavContainer = styled.div`
   justify-content: center;
   align-items: center;
   flex: 1 0 0;
+
+  @media (max-width: 768px) {
+    flex: 1 0 0;
+  }
 `;
 
 const Nav = styled.button`
@@ -87,6 +99,10 @@ const Nav = styled.button`
   &:hover {
     color: #4a3aff;
   }
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const RightSpace = styled.div`
@@ -95,6 +111,10 @@ const RightSpace = styled.div`
   height: 2.5rem;
   align-items: flex-start;
   flex-shrink: 0;
+
+  @media (max-width: 768px) {
+    width: 0;
+  }
 `;
 
 const AdminHeader = styled.button`

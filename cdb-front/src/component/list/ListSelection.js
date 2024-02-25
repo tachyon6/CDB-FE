@@ -53,6 +53,15 @@ const ListSelectionContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
 `;
 
 const SelectionTitleContainer = styled.div`
@@ -83,6 +92,10 @@ const SelectionTitle = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.02rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const SelectionSubTitle = styled.div`
@@ -96,6 +109,10 @@ const SelectionSubTitle = styled.div`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const SelectionHighlight = styled.span`
@@ -131,6 +148,10 @@ const ListSelectionTitle = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.015rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const ListSelectionItem = styled.div`
@@ -145,6 +166,10 @@ const ListSelectionItem = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.01rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const ListSelectionButton = styled.button`

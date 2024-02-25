@@ -8,6 +8,7 @@ import Admin from "./page/Admin";
 import AdminUpload from "./component/admin/admin-page/AdminUpload";
 import ProtectedRoute from "./component/admin/auth/RouteProtect";
 import AdminData from "./component/admin/admin-page/AdminData";
+import AdminCuration from "./component/admin/admin-page/AdminCuration";
 
 function App() {
   return (
@@ -21,6 +22,7 @@ function App() {
             <Route path="/admin" element={<Admin />} />
             <Route path="/admin/upload" element={<ProtectedRoute><AdminUpload /></ProtectedRoute>} />
             <Route path="/admin/data" element={<ProtectedRoute><AdminData /></ProtectedRoute>} />
+            <Route path="/admin/curation" element={<ProtectedRoute><AdminCuration /></ProtectedRoute>} />
           </Routes>
         </Router>
       </DefaultPage>
@@ -34,7 +36,7 @@ const DefaultPage = styled.div`
   display: flex;
   width: 100%;
   height: 100%;
-  padding-bottom: 1.125rem;
+  padding-bottom: 4.375rem;
   flex-direction: column;
   align-items: center;
   gap: 1rem;

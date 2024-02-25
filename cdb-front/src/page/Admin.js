@@ -90,6 +90,7 @@ const Admin = () => {
         <>
           <ButtonLink to="/admin/upload">업로드하기</ButtonLink>
           <ButtonLink to="/admin/data">사용데이터 보기</ButtonLink>
+          <ButtonLink to="/admin/curation">선별문항 관리</ButtonLink>
           <BottomCorner>
             <LogoutButton onClick={handleLogout}>로그아웃</LogoutButton>
           </BottomCorner>
@@ -108,6 +109,15 @@ const Container = styled.div`
   justify-content: center;
   min-height: 85vh;
   padding: 20px;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
 `;
 
 const ButtonLink = styled(Link)`
@@ -143,6 +153,13 @@ const BottomCorner = styled.div`
   right: 20px;
   bottom: 20px;
   background-color: transparent;
+
+  @media (max-width: 768px) {
+    position: relative;
+    right: 0;
+    bottom: 0;
+  }
+  
 `;
 
 const LogoutButton = styled.button`
@@ -157,6 +174,7 @@ const LogoutButton = styled.button`
   &:hover {
     background-color: #c82333;
   }
+
 `;
 
 const LoginContainer = styled.div`

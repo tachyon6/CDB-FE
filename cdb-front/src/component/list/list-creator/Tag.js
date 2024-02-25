@@ -77,6 +77,10 @@ const TagItemText1 = styled.div`
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.01rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const TagItemText2 = styled.div`
@@ -96,6 +100,10 @@ const TagLine = styled.div`
   height: 0.0625rem;
 
   background: var(--Grayscale-700, #170f49);
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const TagListContainer = styled.div`
@@ -148,4 +156,8 @@ const TagItemText = styled.div`
     css`
       color: var(--Primary-Strong, #4A3AFF);
     `}
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;

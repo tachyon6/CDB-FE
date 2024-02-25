@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 import { CREATE_COMPLETE_FILE } from "../../gql/create-complete";
 import client from "../../client";
 import AWS from "aws-sdk";
-import { IoIosSync } from 'react-icons/io';
+import { IoIosSync } from "react-icons/io";
 import { CREATE_DOWNLOAD_LOG } from "../../gql/create-download-log";
-
+import io from "socket.io-client";
 
 const Input = () => {
   const [inputTitle, setInputTitle] = useState("");
   const [inputCodes, setInputCodes] = useState("");
   const [isDownloading, setIsDownloading] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [fileTitle, setFileTitle] = useState("");
 
   const accessKeyId = process.env.REACT_APP_S3_ACCESS_KEY_ID;
   const secretAccessKey = process.env.REACT_APP_S3_SECRET_ACCESS_KEY;
@@ -22,9 +24,50 @@ const Input = () => {
     region: region,
   });
 
+  useEffect(() => {
+    const socket = io("http://3.38.108.229:8080");
+    socket.on("connect", () => {
+      console.log("Socket connected");
+    });
+    socket.on("progress", (data) => {
+      if (data.fileName === fileTitle) {
+        console.log(data);
+        setProgress(data.progress);
+      }
+    });
+
+    return () => {
+      socket.off("progress");
+      socket.disconnect();
+    };
+  }, [fileTitle]);
+
+  // useEffect(() => {
+  //   console.log(progress);
+  // }, [progress]);
+
+  const getS3Object = async (params) => {
+    return new Promise((resolve, reject) => {
+      const s3 = new AWS.S3();
+      s3.getObject(params, (err, data) => {
+        if (err) reject(err);
+        else resolve(data);
+      });
+    });
+  };
+
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter" && !isDownloading) {
+      handleDownloadPdf(inputTitle, inputCodes);
+    }
+  };
+
   const handleDownloadPdf = (title, codes) => {
     if (title === "") {
       title = "2025학년도 대학수학능력시험 대비 문제지";
+      setFileTitle(title);
+    } else {
+      setFileTitle(title);
     }
     setIsDownloading(true);
     const codeArr = codes.split(" ");
@@ -48,8 +91,7 @@ const Input = () => {
       })
       .then((res) => {
         console.log(res);
-      }
-      )
+      })
       .catch((err) => {
         console.log(err);
         alert(err.message);
@@ -69,40 +111,39 @@ const Input = () => {
       .then(async (res) => {
         console.log(res);
         const fileName = await res.data.combine;
-        const s3 = new AWS.S3();
-        const params = {
-          Bucket: process.env.REACT_APP_S3_BUCKET,
-          Key: `uploads/results/${fileName}.pdf`,
-        };
+        try {
+          const questionParams = {
+            Bucket: process.env.REACT_APP_S3_BUCKET,
+            Key: `uploads/results/${fileName}.pdf`,
+          };
+          const questionData = await getS3Object(questionParams);
+          const url = URL.createObjectURL(
+            new Blob([questionData.Body], { type: "application/pdf" })
+          );
+          const a = document.createElement("a");
+          a.href = url;
+          a.download = `${title}.pdf`;
+          a.click();
 
-        s3.getObject(params, (err, data) => {
-          if (err) {
-            console.log(err);
-          } else {
-            const blob = new Blob([data.Body], { type: "application/pdf" });
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = `${title}.pdf`;
-            link.click();
-          }
-        });
-
-        const params2 = {
-          Bucket: process.env.REACT_APP_S3_BUCKET,
-          Key: `uploads/results_ans/${fileName}.pdf`,
-        };
-
-        s3.getObject(params2, (err, data) => {
-          if (err) {
-            console.log(err);
-          } else {
-            const blob = new Blob([data.Body], { type: "application/pdf" });
-            const link = document.createElement("a");
-            link.href = window.URL.createObjectURL(blob);
-            link.download = `${title}_정답.pdf`;
-            link.click();
-          }
-        });
+          const answerParams = {
+            Bucket: process.env.REACT_APP_S3_BUCKET,
+            Key: `uploads/results_ans/${fileName}.pdf`,
+          };
+          const answerData = await getS3Object(answerParams);
+          const url2 = URL.createObjectURL(
+            new Blob([answerData.Body], { type: "application/pdf" })
+          );
+          const a2 = document.createElement("a");
+          a2.href = url2;
+          a2.download = `${title}_정답.pdf`;
+          a2.click();
+          setProgress(100);
+        } catch (err) {
+          console.log(err);
+          alert(err.message);
+        } finally {
+          setIsDownloading(false);
+        }
       })
       .catch((err) => {
         console.log(err);
@@ -111,7 +152,7 @@ const Input = () => {
       .finally(() => {
         setIsDownloading(false);
       });
-  }
+  };
   return (
     <MainContainer>
       <InputHeader>
@@ -119,9 +160,14 @@ const Input = () => {
       </InputHeader>
       <InputFieldContainer>
         <InputField1>
-          <InputText1> 시험지 상단에 표기될 제목을 입력해주세요. (미입력시 기본문구로 출력됩니다.)</InputText1>
+          <InputText1>
+            {" "}
+            시험지 상단에 표기될 제목을 입력해주세요. (미입력시 기본문구로
+            출력됩니다.)
+          </InputText1>
 
-          <Input1 placeholder="2025학년도 대학수학능력시험 대비 문제지"
+          <Input1
+            placeholder="2025학년도 대학수학능력시험 대비 문제지"
             value={inputTitle}
             onChange={(e) => setInputTitle(e.target.value)}
           ></Input1>
@@ -132,22 +178,47 @@ const Input = () => {
           </InputText2>
           <Input2Box>
             <Input2Container>
-              <Input2 placeholder="Ex) 211109A 221130B 230622"
+              <Input2
+                placeholder="Ex) 211109A 221130B 230622"
                 value={inputCodes}
                 onChange={(e) => setInputCodes(e.target.value)}
+                onKeyPress={handleKeyPress}
               ></Input2>
+              <TextArea
+              placeholder="Ex) 211109A 221130B 230622"
+              value={inputCodes}
+              onChange={(e) => setInputCodes(e.target.value)}
+              onKeyPress={handleKeyPress}
+             />
             </Input2Container>
-            <Input2Button onClick={() => handleDownloadPdf(inputTitle, inputCodes)} disabled={isDownloading}>
-              {isDownloading ? <IoIosSync className="loading-icon" /> : 'PDF로 다운받기'}
+            <Input2Button
+              onClick={() => handleDownloadPdf(inputTitle, inputCodes)}
+              disabled={isDownloading}
+            >
+              {isDownloading ? (
+                <IoIosSync
+                  className="loading-icon"
+                  style={{
+                    color: "#4a3aff",
+                    fontSize: "1.5rem",
+                    animation: "spin 1s linear infinite",
+                  }}
+                />
+              ) : (
+                "PDF로 다운받기"
+              )}
             </Input2Button>
           </Input2Box>
         </InputField2>
+        {isDownloading && (
+          <ProgressBar>
+            <Progress width={progress}></Progress>
+          </ProgressBar>
+        )}
         <Caption1>
           문제 번호 입렵 방법 )
           <CaptionFrameContainer>
-            <CaptionFrame>
-              2024학년도 + 9월 + 15번 + 공통 → 240915
-            </CaptionFrame>
+            <CaptionFrame>2024학년도 + 9월 + 15번 + 공통 → 240915</CaptionFrame>
             <CaptionFrame>
               2023학년도 + 6월 + 30번 + 미적분 → 230630B
             </CaptionFrame>
@@ -187,6 +258,15 @@ export const MainContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
 `;
 
 const InputHeader = styled.div`
@@ -209,6 +289,10 @@ const InputTitle = styled.h1`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.03rem;
+
+  @media (max-width: 768px) {
+    font-size: 2rem;
+  }
 `;
 
 const InputFieldContainer = styled.div`
@@ -238,6 +322,10 @@ const InputText1 = styled.div`
   font-weight: 500;
   line-height: normal;
   text-align: left;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const InputBox = styled.div`
@@ -281,6 +369,10 @@ const InputText2 = styled.div`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const Input2Container = styled.div`
@@ -296,6 +388,11 @@ const Input2Box = styled.div`
   display: flex;
   align-items: center;
   align-self: stretch;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
 `;
 
 const Input2 = styled.input`
@@ -313,6 +410,28 @@ const Input2 = styled.input`
 
   &::placeholder {
     font-size: 1.1rem;
+  }
+
+  @media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const TextArea = styled.textarea`
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+  height: 7.125rem;
+  padding: 1rem;
+  align-items: flex-start;
+  gap: 0.5rem;
+  align-self: stretch;
+
+  border-radius: 0.375rem;
+  border: 1px solid var(--Gray-300, #dee2e6);
+  background: var(--Default-White, #fff);
+  box-sizing: border-box;
   }
 `;
 
@@ -342,13 +461,15 @@ const Input2Button = styled.button`
   outline: none;
   appearance: none;
   box-sizing: border-box;
-  transition: transform 0.1s ease, box-shadow 0.1s ease;
+  transition:
+    transform 0.1s ease,
+    box-shadow 0.1s ease;
   &:hover {
     background: #3829e0;
   }
   &:active {
     transform: scale(0.95);
-    background: #6A5ACD;
+    background: #6a5acd;
   }
 
   .loading-icon {
@@ -356,14 +477,24 @@ const Input2Button = styled.button`
   }
 
   @keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
   }
 
   &:disabled {
     background: var(--Grayscale-300, #d9dbe9);
-    color: var(--Grayscale-600, #6F6C8F);
+    color: var(--Grayscale-600, #6f6c8f);
     cursor: not-allowed;
+  }
+
+  @media (max-width: 768px) {
+    border-radius: 0.5rem;
+    width: 100%;
+    padding: 1rem 1.5rem;
   }
 `;
 
@@ -373,7 +504,7 @@ const Caption1 = styled.div`
   align-items: flex-start;
   gap: 1rem;
   align-self: stretch;
-  color: var(--Grayscale-600, #6F6C8F);
+  color: var(--Grayscale-600, #6f6c8f);
   /* Caption/Medium */
   font-family: "Pretendard Variable";
   font-size: 0.75rem;
@@ -405,7 +536,7 @@ const Caption2 = styled.div`
   gap: 4rem;
   align-self: stretch;
   align-self: stretch;
-  color: var(--Grayscale-600, #6F6C8F);
+  color: var(--Grayscale-600, #6f6c8f);
   /* Caption/Medium */
   font-family: "Pretendard Variable";
   font-size: 0.75rem;
@@ -415,3 +546,17 @@ const Caption2 = styled.div`
   letter-spacing: -0.0075rem;
 `;
 
+const ProgressBar = styled.div`
+  width: 100%;
+  background-color: #eee;
+  height: 20px;
+  border-radius: 5px;
+  overflow: hidden;
+`;
+
+const Progress = styled.div`
+  background-color: #4a3aff;
+  height: 100%;
+  width: ${(props) => props.width}%;
+  transition: width 0.4s ease;
+`;

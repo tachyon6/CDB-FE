@@ -96,6 +96,10 @@ const TagLine = styled.div`
   height: 0.0625rem;
 
   background: var(--Grayscale-700, #170f49);
+
+  @media (max-width: 48.125rem) {
+    width: 100%;
+  }
 `;
 
 const TagListContainer = styled.div`

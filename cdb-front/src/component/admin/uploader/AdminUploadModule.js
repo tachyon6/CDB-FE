@@ -128,6 +128,15 @@ const ListCreatorContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
 `;
 
 const ListTitleContainer = styled.div`
@@ -278,6 +287,10 @@ const DragDropContainer = styled.div`
   color: #bdbdbd;
   outline: none;
   transition: border 0.24s ease-in-out;
+
+  @media (max-width: 768px) {
+    padding: 0;
+  }
 `;
 
 const UploadedFileInfo = styled.div`

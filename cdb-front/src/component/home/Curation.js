@@ -1,7 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import styled from "styled-components";
+import client from "../../client";
+import { GET_ALL_CURATION } from "../../gql/curationList";
 
-const CurationItems = (Header, Title, Subtitle) => {
+const CurationItems = (Header, Title, list) => {
+  const listLength = list.split(" ").length;
+  const handleCopyList = () => {
+    navigator.clipboard.writeText(list)
+      .then(() => alert("클립보드에 복사되었습니다."))
+      .catch(err => console.error("Error copying text: ", err));
+  };
+
   return (
     <CurationList>
       <CurationListNum>
@@ -10,13 +19,13 @@ const CurationItems = (Header, Title, Subtitle) => {
       <CurationListItem>
         <CurationItemHeading>
           <CurationItemTitle> {Title}</CurationItemTitle>
-          <CurationItemSubtitle>{Subtitle}</CurationItemSubtitle>
+          <CurationItemSubtitle>총 {listLength}문항 </CurationItemSubtitle>
         </CurationItemHeading>
-        <CurationBadges>
+        <CurationBadges onClick={handleCopyList}>
           <CurationCopyIconBox>
             <CurationCopyIcon />
           </CurationCopyIconBox>
-          <CurationCopyText>복사하기</CurationCopyText>
+          <CurationCopyText >복사하기</CurationCopyText>
         </CurationBadges>
       </CurationListItem>
     </CurationList>
@@ -24,6 +33,21 @@ const CurationItems = (Header, Title, Subtitle) => {
 };
 
 const Curation = () => {
+  const [curations, setCurations] = useState([]);
+
+  useEffect(() => {
+    client
+        .query({
+            query: GET_ALL_CURATION,
+        })
+        .then((result) => {
+            console.log(result);
+            setCurations(result.data.getCurationList);
+        })
+        .catch((err) => {
+            console.log(err);
+        });
+}, []);
   return (
     <CurationContainer>
       <CurationTitleContainer>
@@ -38,24 +62,9 @@ const Curation = () => {
         </CurationTagText>
       </CurationTitleContainer>
       <Line />
-      {CurationItems("미적분", "최근 7개년 미분가능성 4점 모음", "총 40문항")}
-      {CurationItems("미적분", "최근 7개년 음함수미분 4점 모음", "총 25문항")}
-      {CurationItems(
-        "미적분",
-        "최근 7개년 최대최소/극대극소 4점 모음",
-        "총 30문항"
-      )}
-      {CurationItems(
-        "미적분",
-        "최근 7개년 정적분으로 정의된 함수 4점 모음",
-        "총 20문항"
-      )}
-      {CurationItems("수학2", "최근 7개년 속도/가속도 4점 모음", "총 20문항")}
-      {CurationItems(
-        "수학1",
-        "최근 7개년 여러 가지 수열 4점 모음",
-        "총 20문항"
-      )}
+      {curations.map((curation) => {
+        return CurationItems(curation.subject, curation.name, curation.list);
+      })}
     </CurationContainer>
   );
 };
@@ -74,6 +83,16 @@ const CurationContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
 `;
 
 const CurationTitleContainer = styled.h1`
@@ -103,13 +122,16 @@ const CurationTitle = styled.div`
   color: var(--Grayscale-700, #170f49);
   text-align: center;
 
-  /* H4/Bold */
   font-family: "Pretendard Variable";
   font-size: 2rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.02rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+  }
 `;
 
 const CurationTag = styled.div`
@@ -141,12 +163,20 @@ const CurationTagText = styled.div`
   font-style: normal;
   font-weight: 500;
   line-height: normal;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const Line = styled.div`
   width: 48.125rem;
   height: 0.0625rem;
   background: var(--Grayscale-700, #170f49);
+
+  @media (max-width: 768px) {
+    width: 18.4375rem;
+  }
 `;
 
 const CurationList = styled.div`
@@ -156,6 +186,13 @@ const CurationList = styled.div`
   gap: 0.5rem;
   align-self: stretch;
   width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    gap: 0;
+  }
 `;
 
 const CurationListNum = styled.h5`
@@ -165,6 +202,11 @@ const CurationListNum = styled.h5`
   flex-direction: column;
   align-items: center;
   gap: 0.625rem;
+
+  @media (max-width: 768px) {
+    padding: 0;
+    margin: 0;
+  }
 `;
 
 const CurationListNumText = styled.div`
@@ -177,6 +219,10 @@ const CurationListNumText = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.015rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.25rem;
+  }
 `;
 
 const CurationListItem = styled.div`
@@ -188,6 +234,11 @@ const CurationListItem = styled.div`
   align-self: stretch;
   border-bottom: 1px solid var(--Grayscale-200, #eff0f6);
   background: var(--Grayscale-000, #fff);
+
+  @media (max-width: 768px) {
+    width: 100%;
+    padding: 0.25rem 0.5rem;
+  }
 `;
 
 const CurationItemHeading = styled.div`
@@ -208,6 +259,10 @@ const CurationItemTitle = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.01rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.875rem;
+  }
 `;
 
 const CurationItemSubtitle = styled.div`
@@ -220,12 +275,21 @@ const CurationItemSubtitle = styled.div`
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.00875rem;
+
+  @media (max-width: 768px) {
+    font-size: 0.75rem;
+  }
 `;
 
 const CurationCopyIconBox = styled.svg`
   width: 1.5rem;
   height: 1.5rem;
   fill: var(--Primary-Strong, #6f6c8f);
+
+  @media (max-width: 768px) {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
 `;
 
 const CurationCopyIcon = () => {

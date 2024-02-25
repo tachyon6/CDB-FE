@@ -31,7 +31,9 @@ const Description = () => {
             <br />
             가형 → A / 나형 → B
             <br />
-            확통 → A / 미적 → B / 기하 → C (공통 문항일 경우에는 표기 안함)
+            확통 → A / 미적 → B / 기하 → C 
+            <br />
+            (공통 문항일 경우에는 표기 안함)
           </DescriptionListText1>
           <DescriptionListText2>
             2023학년도 + 6월 + 30번 + 미적분 →{" "}
@@ -87,6 +89,15 @@ const DescriptionContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
 `;
 
 const DescriptionTitleContainer = styled.div`
@@ -101,6 +112,10 @@ const Line = styled.div`
   width: 48.125rem;
   height: 0.0625rem;
   background: var(--Grayscale-700, #170f49);
+
+  @media (max-width: 768px) {
+    width: 18.4375rem;
+  }
 `;
 
 const DescriptionList = styled.div`
@@ -108,6 +123,12 @@ const DescriptionList = styled.div`
   align-items: center;
   gap: 1rem;
   align-self: stretch;
+
+  @media (max-width: 768px) {
+    width: 18.4375rem;
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 const DescriptionSubtitle = styled.div`
@@ -184,24 +205,42 @@ const DescriptionListImg1 = styled.div`
   height: 12.6875rem;
   align-self: stretch;
   border-radius: 0.75rem;
-  border: 1px solid var(--Grayscale-999, #000);
+  border: none;
   background: url("/assets/Description1.png"), lightgray 50% / cover no-repeat;
+
+  @media (max-width: 768px) {
+    width: 19.4375rem;
+    height: 9.5rem;
+    background: url("/assets/Description1_mobile.png"), lightgray 50% / cover no-repeat;
+  }
 `;
 const DescriptionListImg2 = styled.div`
   width: 11.25rem;
   height: 7.5rem;
   align-self: stretch;
   border-radius: 0.75rem;
-  border: 1px solid var(--Grayscale-999, #000);
+  border: none;
   background: url("/assets/Description2.png"), lightgray 50% / cover no-repeat;
+
+  @media (max-width: 768px) {
+    width: 19.4375rem;
+    height: 7.5rem;
+    background: url("/assets/Description2_mobile.png"), lightgray 50% / cover no-repeat;
+  }
 `;
 const DescriptionListImg3 = styled.div`
   width: 11.25rem;
   height: 7.5rem;
   align-self: stretch;
   border-radius: 0.75rem;
-  border: 1px solid var(--Grayscale-999, #000);
+  border: none;
   background: url("/assets/Description3.png"), lightgray 50% / cover no-repeat;
+
+  @media (max-width: 768px) {
+    width: 19.4375rem;
+    height: 7.5rem;
+    background: url("/assets/Description3_mobile.png"), lightgray 50% / cover no-repeat;
+  }
 `;
 
 const DescriptionListTextBox = styled.div`
@@ -212,6 +251,11 @@ const DescriptionListTextBox = styled.div`
   align-items: flex-start;
   gap: 1rem;
   flex: 1 0 0;
+
+  @media (max-width: 768px) {
+    width: 18.4375rem;
+  }
+
 `;
 
 const DescriptionListText1 = styled.div`

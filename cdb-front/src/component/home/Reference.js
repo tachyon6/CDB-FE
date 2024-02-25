@@ -27,6 +27,15 @@ const ReferenceContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 1.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
 `;
 
 const ReferenceTitleContainer = styled.div`
@@ -54,6 +63,10 @@ const Line = styled.div`
   width: 48.125rem;
   height: 0.0625rem;
   background: var(--Grayscale-700, #170f49);
+
+  @media (max-width: 768px) {
+    width: 18.4375rem;
+  }
 `;
 
 const ReferenceImg = styled.div`

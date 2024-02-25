@@ -89,6 +89,15 @@ const ListCreatorContainer = styled.div`
   background: var(--Grayscale-000, #fff);
   box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1);
   box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    width: 21.4375rem;
+    padding: 3.5rem 1rem;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+  }
 `;
 
 const ListTitleContainer = styled.div`
@@ -111,6 +120,10 @@ const ListTitle = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.02rem;
+
+  @media (max-width: 768px) {
+    font-size: 1.75rem;
+  }
 `;
 
 const NavBar = styled.div`
