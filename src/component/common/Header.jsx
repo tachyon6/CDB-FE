@@ -63,7 +63,7 @@ const HeaderContainer = styled.header`
 const Logo = styled.div`
   width: 8.5rem;
   height: 2.5rem;
-  background: url("/assets/Original 1.svg"), lightgray -29.013px -76.396px / 142.4% 481.081% no-repeat;
+  background: url("/assets/Original 1.svg") no-repeat center/contain;
   cursor: pointer;
 `;
 
