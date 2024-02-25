@@ -1,10 +1,10 @@
 <svg width="136" height="40" viewBox="0 0 136 40" fill="none" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
-<rect width="136" height="40" fill="#FCFCFC"/>
-<path d="M-169 -387C-169 -388.104 -168.105 -389 -167 -389H7278C7279.1 -389 7280 -388.105 7280 -387V3514C7280 3515.1 7279.1 3516 7278 3516H-167C-168.104 3516 -169 3515.1 -169 3514V-387Z" fill="#F7F7FB"/>
-<path d="M-167 -388H7278V-390H-167V-388ZM7279 -387V3514H7281V-387H7279ZM7278 3515H-167V3517H7278V3515ZM-168 3514V-387H-170V3514H-168ZM-167 3515C-167.552 3515 -168 3514.55 -168 3514H-170C-170 3515.66 -168.657 3517 -167 3517V3515ZM7279 3514C7279 3514.55 7278.55 3515 7278 3515V3517C7279.66 3517 7281 3515.66 7281 3514H7279ZM7278 -388C7278.55 -388 7279 -387.552 7279 -387H7281C7281 -388.657 7279.66 -390 7278 -390V-388ZM-167 -390C-168.657 -390 -170 -388.657 -170 -387H-168C-168 -387.552 -167.552 -388 -167 -388V-390Z" fill="black" fill-opacity="0.1"/>
-<rect width="1440" height="1917" transform="translate(-16 -12)" fill="#EFF0F6"/>
-<rect width="1440" height="64" transform="translate(-16 -12)" fill="white"/>
-<rect width="136" height="40" fill="url(#pattern0)"/>
+<rect width="136" height="40" fill="#FCFCFC" style="fill:#FCFCFC;fill:color(display-p3 0.9864 0.9864 0.9864);fill-opacity:1;"/>
+<path d="M-132 -770C-132 -771.105 -131.105 -772 -130 -772H4327C4328.1 -772 4329 -771.105 4329 -770V573C4329 574.105 4328.1 575 4327 575H-130C-131.104 575 -132 574.105 -132 573V-770Z" fill="#F7F7FB" style="fill:#F7F7FB;fill:color(display-p3 0.9686 0.9686 0.9843);fill-opacity:1;"/>
+<path d="M-130 -771H4327V-773H-130V-771ZM4328 -770V573H4330V-770H4328ZM4327 574H-130V576H4327V574ZM-131 573V-770H-133V573H-131ZM-130 574C-130.552 574 -131 573.552 -131 573H-133C-133 574.657 -131.657 576 -130 576V574ZM4328 573C4328 573.552 4327.55 574 4327 574V576C4328.66 576 4330 574.657 4330 573H4328ZM4327 -771C4327.55 -771 4328 -770.552 4328 -770H4330C4330 -771.657 4328.66 -773 4327 -773V-771ZM-130 -773C-131.657 -773 -133 -771.657 -133 -770H-131C-131 -770.552 -130.552 -771 -130 -771V-773Z" fill="black" fill-opacity="0.1" style="fill:black;fill-opacity:0.1;"/>
+<rect x="-31.5" y="-95.5" width="1147" height="159" rx="4.5" stroke="#9747FF" style="stroke:#9747FF;stroke:color(display-p3 0.5922 0.2784 1.0000);stroke-opacity:1;" stroke-dasharray="10 5"/>
+<rect width="375" height="56" transform="translate(-16 -8)" fill="white" style="fill:white;fill-opacity:1;"/>
+<rect width="136" height="40" fill="url(#pattern0)" style=""/>
 <defs>
 <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
 <use xlink:href="#image0_0_1" transform="matrix(0.000474667 0 0 0.0016036 -0.213333 -1.90991)"/>
