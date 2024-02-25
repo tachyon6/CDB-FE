@@ -49,3 +49,7 @@ body {
   overflow-x: hidden;
   box-sizing: border-box;
 }
+
+html{
+  overflow-x: hidden;
+}
