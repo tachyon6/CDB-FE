@@ -13,6 +13,7 @@ const Input = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [fileTitle, setFileTitle] = useState("");
+  const [clientId, setClientId] = useState("");
 
   const accessKeyId = process.env.REACT_APP_S3_ACCESS_KEY_ID;
   const secretAccessKey = process.env.REACT_APP_S3_SECRET_ACCESS_KEY;
@@ -29,18 +30,22 @@ const Input = () => {
     socket.on("connect", () => {
       console.log("Socket connected");
     });
+    socket.on("yourId", (data) => {
+      setClientId(data);
+    });
+
     socket.on("progress", (data) => {
-      if (data.fileName === fileTitle) {
-        console.log(data);
+      if(data.clientId === clientId) {
         setProgress(data.progress);
       }
     });
-
+    
     return () => {
       socket.off("progress");
+      socket.off("yourId");
       socket.disconnect();
     };
-  }, [fileTitle]);
+  }, [clientId]);
 
   // useEffect(() => {
   //   console.log(progress);
@@ -105,6 +110,7 @@ const Input = () => {
             file_name: title,
             question_codes: codeArr,
           },
+          client_id: clientId,
         },
         fetchPolicy: "no-cache",
       })
