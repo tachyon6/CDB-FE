@@ -31,7 +31,7 @@ const Input = () => {
       console.log("Socket connected");
     });
     socket.on("yourId", (data) => {
-      setClientId(data);
+      setClientId(data.id);
     });
 
     socket.on("progress", (data) => {
