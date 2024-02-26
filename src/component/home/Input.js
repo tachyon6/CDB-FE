@@ -45,7 +45,7 @@ const Input = () => {
       socket.off("yourId");
       socket.disconnect();
     };
-  }, []);
+  }, [fileName]);
 
   // useEffect(() => {
   //   console.log(progress);
