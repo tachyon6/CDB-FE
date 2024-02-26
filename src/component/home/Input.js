@@ -27,25 +27,38 @@ const Input = () => {
 
   useEffect(() => {
     const socket = io("https://quark-api.tachyon6.com");
+    
     socket.on("connect", () => {
       console.log("Socket connected");
     });
+  
     socket.on("yourId", (data) => {
       setClientId(data.id);
     });
-
-    socket.on("progress", (data) => {
-      if(data.clientId === clientId) {
-        setProgress(data.progress);
-      }
-    });
-
+  
     return () => {
-      socket.off("progress");
+      socket.off("connect");
       socket.off("yourId");
       socket.disconnect();
     };
-  }, [fileName]);
+  }, []);
+
+  useEffect(() => {
+    // 이 useEffect는 clientId가 설정되거나 변경될 때마다 실행됩니다.
+    if (clientId) {
+      const socket = io("https://quark-api.tachyon6.com");
+  
+      socket.on("progress", (data) => {
+        if(data.clientId === clientId) {
+          setProgress(data.progress);
+        }
+      });
+  
+      return () => {
+        socket.off("progress");
+      };
+    }
+  }, [clientId]); 
 
   // useEffect(() => {
   //   console.log(progress);
