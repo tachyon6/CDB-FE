@@ -39,13 +39,13 @@ const Input = () => {
         setProgress(data.progress);
       }
     });
-    
+
     return () => {
       socket.off("progress");
       socket.off("yourId");
       socket.disconnect();
     };
-  }, [clientId]);
+  }, []);
 
   // useEffect(() => {
   //   console.log(progress);
