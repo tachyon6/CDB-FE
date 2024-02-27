@@ -13,7 +13,7 @@ const Input = () => {
   const [isDownloading, setIsDownloading] = useState(false);
   const [progress, setProgress] = useState(0);
   const [fileTitle, setFileTitle] = useState("");
-  const [clientId, setClientId] = useState("");
+  const [clientIdFront, setClientIdFront] = useState("");
 
   const accessKeyId = process.env.REACT_APP_S3_ACCESS_KEY_ID;
   const secretAccessKey = process.env.REACT_APP_S3_SECRET_ACCESS_KEY;
@@ -33,13 +33,13 @@ const Input = () => {
     });
   
     socket.on("yourId", (data) => {
-      setClientId(data.id);
+      setClientIdFront(data.id);
       console.log("clientId set: ", data.id);
     });
   
-    socket.on("progress", (data) => {
-      console.log(data.id, clientId);
-      if(data.id === clientId) {
+    socket.on("progress", (clientId, data) => {
+      console.log(clientId, data.progress);
+      if(clientId === clientIdFront) {
         setProgress(data.progress);
       }
     });
@@ -115,7 +115,7 @@ const Input = () => {
             file_name: title,
             question_codes: codeArr,
           },
-          client_id: clientId,
+          client_id: clientIdFront,
         },
         fetchPolicy: "no-cache",
       })
