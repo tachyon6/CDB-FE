@@ -25,12 +25,7 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <img
-        src={logo}
-        alt="logo"
-        onClick={handleHomeClick}
-        style={{ cursor: "pointer", width: "8.5rem", height: "2.5rem" }}
-      />
+      <Logo onClick={handleHomeClick} />
       <NavContainer>
         <Nav onClick={handleHomeClick} active={isActive("/")}>
           기출문제 뽑기
@@ -70,8 +65,9 @@ const HeaderContainer = styled.header`
 const Logo = styled.div`
   width: 8.5rem;
   height: 2.5rem;
-  background: url("/assets/Original 1.svg") no-repeat center/contain;
+  background: url("/assets/Original 2.svg") no-repeat center/contain;
   cursor: pointer;
+  filter: blur(0px);
 `;
 
 const NavContainer = styled.div`
