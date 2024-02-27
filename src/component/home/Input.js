@@ -14,6 +14,7 @@ const Input = () => {
   const [progress, setProgress] = useState(0);
   const [fileTitle, setFileTitle] = useState("");
   const [clientIdFront, setClientIdFront] = useState("");
+  const [pleaseWait, setPleaseWait] = useState("");
 
   const accessKeyId = process.env.REACT_APP_S3_ACCESS_KEY_ID;
   const secretAccessKey = process.env.REACT_APP_S3_SECRET_ACCESS_KEY;
@@ -49,9 +50,16 @@ const Input = () => {
     };
   }, []);
 
-  // useEffect(() => {
-  //   console.log(progress);
-  // }, [progress]);
+  useEffect(() => {
+    console.log(progress);
+    if(progress === 5){
+      setPleaseWait("파일 생성 대기중입니다. 사용자가 많을 경우 시간이 걸릴 수 있습니다.")
+    } else if(progress >= 25 || progress < 90){
+      setPleaseWait("파일을 생성 중입니다. 잠시만 기다려주세요.")
+    } else if (progress === 90) {
+      setPleaseWait("파일 생성이 완료되었습니다. 다운로드 중..")
+    }
+  }, [progress]);
 
   const getS3Object = async (params) => {
     return new Promise((resolve, reject) => {
@@ -82,8 +90,8 @@ const Input = () => {
     if (codeArr.length === 0) {
       alert("문제 번호들을 입력해주세요.");
       return;
-    } else if (codeArr.length > 200) {
-      alert("200개 이하의 문제 번호들을 입력해주세요.");
+    } else if (codeArr.length > 50) {
+      alert("현재는 50문항 이내로만 다운로드 가능합니다.");
       return;
     }
 
@@ -221,6 +229,7 @@ const Input = () => {
         {isDownloading && (
           <ProgressBar>
             <Progress width={progress}></Progress>
+            {pleaseWait}
           </ProgressBar>
         )}
         <Caption1>
