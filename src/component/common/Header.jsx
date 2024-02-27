@@ -25,7 +25,14 @@ const Header = () => {
 
   return (
     <HeaderContainer>
-      <Logo onClick={handleHomeClick} />
+      <object type="image/svg+xml" data={logo}>
+        <img
+          src={logo}
+          alt="logo"
+          style={{ width: "8.5rem", height: "2.5rem", cursor: "pointer" }}
+          onClick={handleHomeClick}
+        />
+      </object>
       <NavContainer>
         <Nav onClick={handleHomeClick} active={isActive("/")}>
           기출문제 뽑기
