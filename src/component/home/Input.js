@@ -54,7 +54,7 @@ const Input = () => {
     console.log(progress);
     if(progress === 5){
       setPleaseWait("파일 생성 대기중입니다. 사용자가 많을 경우 시간이 걸릴 수 있습니다.")
-    } else if(progress >= 25 || progress < 90){
+    } else if(progress >= 25 && progress < 90){
       setPleaseWait("파일을 생성 중입니다. 잠시만 기다려주세요.")
     } else if (progress === 90) {
       setPleaseWait("파일 생성이 완료되었습니다. 다운로드 중..")
