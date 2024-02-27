@@ -102,6 +102,7 @@ const Nav = styled.button`
 
   @media (max-width: 768px) {
     font-size: 0.875rem;
+    padding: 0.5rem 0.5rem;
   }
 `;
 
