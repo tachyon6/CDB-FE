@@ -37,11 +37,8 @@ const Input = () => {
       console.log("clientId set: ", data.id);
     });
   
-    socket.on("progress", (clientId, data) => {
-      console.log(clientId, data.progress);
-      if(clientId === clientIdFront) {
+    socket.on("progress", (data) => {
         setProgress(data.progress);
-      }
     });
   
     return () => {
