@@ -231,10 +231,12 @@ const Input = () => {
           </Input2Box>
         </InputField2>
         {isDownloading && (
+          <>
           <ProgressBar>
             <Progress width={progress}></Progress>
-            <ProgressText>{pleaseWait}</ProgressText>
           </ProgressBar>
+          <ProgressText>{pleaseWait}</ProgressText>
+          </>
         )}
         <Caption1>
           문제 번호 입렵 방법 )
@@ -583,7 +585,7 @@ const Progress = styled.div`
 `;
 
 const ProgressText = styled.div`
-  color: #fff;
+  color: #4a3aff;
   font-size: 0.75rem;
   padding: 0.25rem;
   text-align: center;
