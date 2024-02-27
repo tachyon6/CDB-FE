@@ -51,7 +51,6 @@ const Input = () => {
   }, []);
 
   useEffect(() => {
-    console.log(progress);
     if(progress === 5){
       setPleaseWait("파일 생성 대기중입니다. 사용자가 많을 경우 시간이 걸릴 수 있습니다.")
     } else if(progress >= 25 && progress < 90){
@@ -109,7 +108,7 @@ const Input = () => {
         fetchPolicy: "no-cache",
       })
       .then((res) => {
-        console.log(res);
+        console.log("log created");
       })
       .catch((err) => {
         console.log(err);
@@ -129,7 +128,6 @@ const Input = () => {
         fetchPolicy: "no-cache",
       })
       .then(async (res) => {
-        console.log(res);
         const fileName = await res.data.combine;
         try {
           const questionParams = {
