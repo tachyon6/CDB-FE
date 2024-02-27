@@ -58,6 +58,10 @@ const Input = () => {
       setPleaseWait("파일을 생성 중입니다. 잠시만 기다려주세요.")
     } else if (progress === 90) {
       setPleaseWait("파일 생성이 완료되었습니다. 다운로드 중..")
+    } else if (progress === 100) {
+      setPleaseWait("")
+    } else {
+      setPleaseWait("")
     }
   }, [progress]);
 
@@ -229,7 +233,7 @@ const Input = () => {
         {isDownloading && (
           <ProgressBar>
             <Progress width={progress}></Progress>
-            {pleaseWait}
+            <ProgressText>{pleaseWait}</ProgressText>
           </ProgressBar>
         )}
         <Caption1>
@@ -576,4 +580,11 @@ const Progress = styled.div`
   height: 100%;
   width: ${(props) => props.width}%;
   transition: width 0.4s ease;
+`;
+
+const ProgressText = styled.div`
+  color: #fff;
+  font-size: 0.75rem;
+  padding: 0.25rem;
+  text-align: center;
 `;
