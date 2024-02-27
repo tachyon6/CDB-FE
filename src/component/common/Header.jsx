@@ -1,6 +1,7 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import logo from "../../Original 1.svg";
 
 const Header = () => {
   const navigate = useNavigate();
@@ -20,11 +21,16 @@ const Header = () => {
 
   const handleAdminClick = () => {
     navigate("/admin");
-  }
+  };
 
   return (
     <HeaderContainer>
-      <Logo onClick={handleHomeClick} />
+      <img
+        src={logo}
+        alt="logo"
+        onClick={handleHomeClick}
+        style={{ cursor: "pointer", width: "8.5rem", height: "2.5rem" }}
+      />
       <NavContainer>
         <Nav onClick={handleHomeClick} active={isActive("/")}>
           기출문제 뽑기
@@ -32,7 +38,9 @@ const Header = () => {
         <Nav onClick={handleListClick} active={isActive("/list")}>
           리스트 생성하기
         </Nav>
-        {localStorage.getItem("accessToken") ? <AdminHeader onClick={handleAdminClick} >관리자페이지</AdminHeader> : null}
+        {localStorage.getItem("accessToken") ? (
+          <AdminHeader onClick={handleAdminClick}>관리자페이지</AdminHeader>
+        ) : null}
       </NavContainer>
       <RightSpace />
     </HeaderContainer>
@@ -49,7 +57,7 @@ const HeaderContainer = styled.header`
   align-items: center;
   gap: 3rem;
   background: var(--Grayscale-000, #fff);
-  box-sizing: border-box; 
+  box-sizing: border-box;
   border: none;
 
   @media (max-width: 768px) {
@@ -57,7 +65,6 @@ const HeaderContainer = styled.header`
     justify-content: space-between;
     gap: 0;
   }
-
 `;
 
 const Logo = styled.div`
@@ -65,11 +72,6 @@ const Logo = styled.div`
   height: 2.5rem;
   background: url("/assets/Original 1.svg") no-repeat center/contain;
   cursor: pointer;
-
-  @media (max-width: 768px) {
-    min-width: 8.5rem;
-    min-height: 2.5rem;
-  }
 `;
 
 const NavContainer = styled.div`
