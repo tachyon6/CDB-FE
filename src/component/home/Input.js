@@ -28,20 +28,20 @@ const Input = () => {
 
   useEffect(() => {
     const socket = io("https://quark-api.tachyon6.com");
-  
+
     socket.on("connect", () => {
       console.log("Socket connected");
     });
-  
+
     socket.on("yourId", (data) => {
       setClientIdFront(data.id);
       console.log("clientId set: ", data.id);
     });
-  
+
     socket.on("progress", (data) => {
-        setProgress(data.progress);
+      setProgress(data.progress);
     });
-  
+
     return () => {
       socket.off("connect");
       socket.off("yourId");
@@ -51,16 +51,18 @@ const Input = () => {
   }, []);
 
   useEffect(() => {
-    if(progress === 5){
-      setPleaseWait("파일 생성 대기중입니다. 사용자가 많을 경우 시간이 걸릴 수 있습니다.")
-    } else if(progress >= 25 && progress < 90){
-      setPleaseWait("파일을 생성 중입니다. 잠시만 기다려주세요.")
+    if (progress === 5) {
+      setPleaseWait(
+        "파일 생성 대기중입니다. 사용자가 많을 경우 시간이 걸릴 수 있습니다."
+      );
+    } else if (progress >= 25 && progress < 90) {
+      setPleaseWait("파일을 생성 중입니다. 잠시만 기다려주세요.");
     } else if (progress === 90) {
-      setPleaseWait("파일 생성이 완료되었습니다. 다운로드 중..")
+      setPleaseWait("파일 생성이 완료되었습니다. 다운로드 중..");
     } else if (progress === 100) {
-      setPleaseWait("")
+      setPleaseWait("");
     } else {
-      setPleaseWait("")
+      setPleaseWait("");
     }
   }, [progress]);
 
@@ -203,11 +205,11 @@ const Input = () => {
                 onKeyPress={handleKeyPress}
               ></Input2>
               <TextArea
-              placeholder="Ex) 211109A 221130B 230622"
-              value={inputCodes}
-              onChange={(e) => setInputCodes(e.target.value)}
-              onKeyPress={handleKeyPress}
-             />
+                placeholder="Ex) 211109A 221130B 230622"
+                value={inputCodes}
+                onChange={(e) => setInputCodes(e.target.value)}
+                onKeyPress={handleKeyPress}
+              />
             </Input2Container>
             <Input2Button
               onClick={() => handleDownloadPdf(inputTitle, inputCodes)}
@@ -230,14 +232,14 @@ const Input = () => {
         </InputField2>
         {isDownloading && (
           <>
-          <ProgressBar>
-            <Progress width={progress}></Progress>
-          </ProgressBar>
-          <ProgressText>{pleaseWait}</ProgressText>
+            <ProgressBar>
+              <Progress width={progress}></Progress>
+            </ProgressBar>
+            <ProgressText>{pleaseWait}</ProgressText>
           </>
         )}
         <Caption1>
-          문제 번호 입렵 방법 )
+          <CaptionText>문제번호 예시</CaptionText>
           <CaptionFrameContainer>
             <CaptionFrame>2024학년도 + 9월 + 15번 + 공통 → 240915</CaptionFrame>
             <CaptionFrame>
@@ -249,7 +251,7 @@ const Input = () => {
           </CaptionFrameContainer>
         </Caption1>
         <Caption2>
-          참고 사항 )
+          <CaptionText>참고</CaptionText>
           <CaptionFrameContainer>
             <CaptionFrame>A형 → A / B형 → B (2012~2016학년도)</CaptionFrame>
             <CaptionFrame>가형 → A / 나형 → B (2017~2021학년도)</CaptionFrame>
@@ -443,16 +445,16 @@ const TextArea = styled.textarea`
 
   @media (max-width: 768px) {
     display: flex;
-  height: 7.125rem;
-  padding: 1rem;
-  align-items: flex-start;
-  gap: 0.5rem;
-  align-self: stretch;
+    height: 7.125rem;
+    padding: 1rem;
+    align-items: flex-start;
+    gap: 0.5rem;
+    align-self: stretch;
 
-  border-radius: 0.375rem;
-  border: 1px solid var(--Gray-300, #dee2e6);
-  background: var(--Default-White, #fff);
-  box-sizing: border-box;
+    border-radius: 0.375rem;
+    border: 1px solid var(--Gray-300, #dee2e6);
+    background: var(--Default-White, #fff);
+    box-sizing: border-box;
   }
 `;
 
@@ -523,22 +525,24 @@ const Caption1 = styled.div`
   display: flex;
   padding: 0rem 0.25rem;
   align-items: flex-start;
-  gap: 1rem;
+  gap: 2rem;
   align-self: stretch;
   color: var(--Grayscale-600, #6f6c8f);
-  /* Caption/Medium */
   font-family: "Pretendard Variable";
   font-size: 0.75rem;
   font-style: normal;
   font-weight: 500;
   line-height: normal;
   letter-spacing: -0.0075rem;
+
+  min-width: 5rem;
 `;
 
 const CaptionFrameContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  text-align: left;
   gap: 1rem;
 `;
 
@@ -550,15 +554,28 @@ const CaptionFrame = styled.div`
   flex: 1 0 0;
 `;
 
+const CaptionText = styled.div`
+  display: flex;
+  padding: 0rem 0.25rem;
+  align-items: flex-start;
+  min-width: 4.5rem;
+  color: var(--Grayscale-600, #6f6c8f);
+  font-family: "Pretendard Variable";
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 500;
+  line-height: normal;
+  letter-spacing: -0.0075rem;
+`;
+
+
 const Caption2 = styled.div`
   display: flex;
   padding: 0rem 0.25rem;
   align-items: flex-start;
-  gap: 4rem;
-  align-self: stretch;
+  gap: 2rem;
   align-self: stretch;
   color: var(--Grayscale-600, #6f6c8f);
-  /* Caption/Medium */
   font-family: "Pretendard Variable";
   font-size: 0.75rem;
   font-style: normal;
