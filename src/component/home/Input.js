@@ -90,7 +90,9 @@ const Input = () => {
       setFileTitle(title);
     }
     setIsDownloading(true);
-    const codeArr = codes.split(" ");
+    const codeArr = codes.trim().split(/\s+/).map((code) => {
+      return code.length > 6 ? code.slice(0, 6) + code.charAt(6).toUpperCase() : code;
+    });
 
     if (codeArr.length === 0) {
       alert("문제 번호들을 입력해주세요.");
