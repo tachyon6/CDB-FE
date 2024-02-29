@@ -38,16 +38,16 @@ const AdminUploadModule = ({
       let monthId;
       switch (month) {
         case "06":
-          selectedMonth = 6;
+          monthId = 6;
           break;
         case "09":
-          selectedMonth = 7;
+          monthId = 7;
           break;
         case "11":
-          selectedMonth = 8;
+          monthId = 8;
           break;
         default:
-          selectedMonth = null; // 기본값이나 오류 처리
+          monthId = null; // 기본값이나 오류 처리
       }
       onSelectionChange("selectedYears", yearId);
       onSelectionChange("selectedMonths", monthId);
