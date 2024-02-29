@@ -4,8 +4,13 @@ import AWS from "aws-sdk";
 import client from "../../../client";
 import AdminUploadModule from "../uploader/AdminUploadModule";
 import LoadingSpinner from "../uploader/LoadingSpinner";
-import {GET_ALL_SUBJECT_MATH, GET_ALL_DIFF_MATH, GET_ALL_MONTH_MATH, GET_ALL_TAG_MATH} from "../../../gql/filterItem";
-import {CREATE_QUESTION_MATH} from "../../../gql/create-question";
+import {
+  GET_ALL_SUBJECT_MATH,
+  GET_ALL_DIFF_MATH,
+  GET_ALL_MONTH_MATH,
+  GET_ALL_TAG_MATH,
+} from "../../../gql/filterItem";
+import { CREATE_QUESTION_MATH } from "../../../gql/create-question";
 
 AWS.config.update({
   accessKeyId: process.env.REACT_APP_S3_ACCESS_KEY_ID,
@@ -150,11 +155,37 @@ const AdminUpload = () => {
 
   const handleFileSelect = (file) => {
     setSelectedFile(file);
+    const year = file.name.substring(0, 2); // '23'
+    const monthCode = file.name.substring(2, 4); // '11', '06', '09' 등
+
+    // exYears에서 해당하는 연도를 찾아 selectedYears를 설정
+    const selectedYearId = exYears
+      .find((yearGroup) => yearGroup.bot.some((y) => y.name.endsWith(year)))
+      ?.bot.find((y) => y.name.endsWith(year))?.id;
+    
+    setSelected.selectedYears(selectedYearId);
+
+    // 월 코드에 따라 selectedMonths 설정
+    let selectedMonth;
+    switch (monthCode) {
+      case "06":
+        selectedMonth = 6;
+        break;
+      case "09":
+        selectedMonth = 7;
+        break;
+      case "11":
+        selectedMonth = 8;
+        break;
+      default:
+        selectedMonth = null; // 기본값이나 오류 처리
+    }
+    setSelected.selectedMonths(selectedMonth);
   };
 
   const handleCreateList = () => {
     if (selectedFile) {
-      setIsLoading(true); 
+      setIsLoading(true);
       const params = {
         //ACL: "public-read",
         Body: selectedFile,
@@ -173,8 +204,8 @@ const AdminUpload = () => {
             alert("Error");
           } else {
             console.log("Uploaded");
-          console.log(selected);
-          console.log(selected.selectedYears[0]);
+            console.log(selected);
+            console.log(selected.selectedYears[0]);
             client
               .mutate({
                 mutation: CREATE_QUESTION_MATH,
@@ -196,7 +227,7 @@ const AdminUpload = () => {
                 console.log(res);
                 setIsLoading(false);
                 alert(
-                    " code: " +
+                  " code: " +
                     res.data.createQuestionMath.code +
                     "가 " +
                     res.data.createQuestionMath.download_url +
@@ -217,20 +248,22 @@ const AdminUpload = () => {
 
   return (
     <>
-    {isLoading ? <LoadingSpinner /> : (
-    <CardList>
-      <AdminUploadModule
-        exSections={subjects}
-        exDiffs={diffs}
-        exMonths={months}
-        exTags={tags}
-        exYears={exYears}
-        onSelectionChange={handleSelectionChange}
-        onCreateList={handleCreateList}
-        onFileSelect={handleFileSelect}
-      />
-    </CardList>
-    )}
+      {isLoading ? (
+        <LoadingSpinner />
+      ) : (
+        <CardList>
+          <AdminUploadModule
+            exSections={subjects}
+            exDiffs={diffs}
+            exMonths={months}
+            exTags={tags}
+            exYears={exYears}
+            onSelectionChange={handleSelectionChange}
+            onCreateList={handleCreateList}
+            onFileSelect={handleFileSelect}
+          />
+        </CardList>
+      )}
     </>
   );
 };
