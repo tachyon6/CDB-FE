@@ -155,32 +155,6 @@ const AdminUpload = () => {
 
   const handleFileSelect = (file) => {
     setSelectedFile(file);
-    const year = file.name.substring(0, 2); // '23'
-    const monthCode = file.name.substring(2, 4); // '11', '06', '09' 등
-
-    // exYears에서 해당하는 연도를 찾아 selectedYears를 설정
-    const selectedYearId = exYears
-      .find((yearGroup) => yearGroup.bot.some((y) => y.name.endsWith(year)))
-      ?.bot.find((y) => y.name.endsWith(year))?.id;
-    
-    setSelected.selectedYears(selectedYearId);
-
-    // 월 코드에 따라 selectedMonths 설정
-    let selectedMonth;
-    switch (monthCode) {
-      case "06":
-        selectedMonth = 6;
-        break;
-      case "09":
-        selectedMonth = 7;
-        break;
-      case "11":
-        selectedMonth = 8;
-        break;
-      default:
-        selectedMonth = null; // 기본값이나 오류 처리
-    }
-    setSelected.selectedMonths(selectedMonth);
   };
 
   const handleCreateList = () => {

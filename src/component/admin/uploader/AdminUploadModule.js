@@ -30,6 +30,27 @@ const AdminUploadModule = ({
         onFileSelect(acceptedFiles[0]);
       }
       setUploadedFile(acceptedFiles.length > 0 ? acceptedFiles[0] : null);
+      const year = acceptedFiles[0].name.substring(0, 2);
+      const month = acceptedFiles[0].name.substring(2, 4);
+      const yearId = exYears
+        .find((yearGroup) => yearGroup.bot.some((y) => y.name.endsWith(year)))
+        ?.bot.find((y) => y.name.endsWith(year))?.id;
+      let monthId;
+      switch (month) {
+        case "06":
+          selectedMonth = 6;
+          break;
+        case "09":
+          selectedMonth = 7;
+          break;
+        case "11":
+          selectedMonth = 8;
+          break;
+        default:
+          selectedMonth = null; // 기본값이나 오류 처리
+      }
+      onSelectionChange("selectedYears", yearId);
+      onSelectionChange("selectedMonths", monthId);
     },
     multiple: false,
   });
@@ -52,11 +73,15 @@ const AdminUploadModule = ({
       {uploadedFile && (
         <UploadedFileInfo>업로드된 파일: {uploadedFile.name}</UploadedFileInfo>
       )}
-      정답 <Input1 type="text" value={inputAnswer} onChange={(e) => {
-        setInputAnswer(e.target.value);
-        onSelectionChange("selectedAnswer", e.target.value);
-      }
-      } />
+      정답{" "}
+      <Input1
+        type="text"
+        value={inputAnswer}
+        onChange={(e) => {
+          setInputAnswer(e.target.value);
+          onSelectionChange("selectedAnswer", e.target.value);
+        }}
+      />
       <AdminTag
         tags={exTags}
         key={`tag-${resetKey}`}
