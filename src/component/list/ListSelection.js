@@ -29,7 +29,7 @@ const ListSelection = forwardRef(({ list }, ref) => {
         </SelectionSubTitle>
       </SelectionTitleContainer>
       <SelectionItemContainer>
-        <ListSelectionTitle>문제 리스트</ListSelectionTitle>
+        <ListSelectionTitle>문제 리스트 : 총 {list.length}문항</ListSelectionTitle>
         <ListSelectionItem>{list.map((item) => item + " ")}</ListSelectionItem>
       </SelectionItemContainer>
       <ListSelectionButton onClick={handleCopy}>
