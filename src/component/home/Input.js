@@ -96,9 +96,11 @@ const Input = () => {
 
     if (codeArr.length === 0) {
       alert("문제 번호들을 입력해주세요.");
+      setIsDownloading(false);
       return;
     } else if (codeArr.length > 50) {
       alert("현재는 50문항 이내로만 다운로드 가능합니다.");
+      setIsDownloading(false);
       return;
     }
 
