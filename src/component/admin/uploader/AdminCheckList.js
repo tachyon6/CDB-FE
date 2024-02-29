@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styled from "styled-components";
 
-const AdminCheckList = ({ type, list, selectionChange }) => {
+const AdminCheckList = ({ type, list, selectionChange, prev }) => {
   const [isVisibleMid, setIsVisibleMid] = useState(true);
   const [visibleBots, setVisibleBots] = useState({});
   const [selectedMid, setSelectedMid] = useState(null);
@@ -18,6 +18,18 @@ const AdminCheckList = ({ type, list, selectionChange }) => {
       selectionChange(selectedMid);
     }
   }, [selectedMid, selectedBot]);
+
+  useEffect(() => { 
+    if (type === "연도") {
+      if (prev) {
+        setSelectedBot([prev]);
+      }
+    } else if (type === "시행월") {
+      if (prev) {
+        setSelectedMid(prev);
+      }
+    }
+  }, [prev]);
 
   const toggleMidVisibility = () => {
     setIsVisibleMid(!isVisibleMid);

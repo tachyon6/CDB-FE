@@ -17,6 +17,8 @@ const AdminUploadModule = ({
   const [resetKey, setResetKey] = useState(0);
   const [uploadedFile, setUploadedFile] = useState(null);
   const [inputAnswer, setInputAnswer] = useState("");
+  const [prevMonthId, setPrevMonthId] = useState(null);
+  const [prevYearId, setPrevYearId] = useState(null);
 
   const resetFilters = () => {
     setResetKey((prevKey) => prevKey + 1);
@@ -32,10 +34,12 @@ const AdminUploadModule = ({
       setUploadedFile(acceptedFiles.length > 0 ? acceptedFiles[0] : null);
       const year = acceptedFiles[0].name.substring(0, 2);
       const month = acceptedFiles[0].name.substring(2, 4);
+      console.log(year, month);
       const yearId = exYears
         .find((yearGroup) => yearGroup.bot.some((y) => y.name.endsWith(year)))
         ?.bot.find((y) => y.name.endsWith(year))?.id;
       let monthId;
+      console.log(yearId);
       switch (month) {
         case "06":
           monthId = 6;
@@ -49,8 +53,9 @@ const AdminUploadModule = ({
         default:
           monthId = null; // 기본값이나 오류 처리
       }
-      onSelectionChange("selectedYears", yearId);
-      onSelectionChange("selectedMonths", monthId);
+      console.log(monthId);
+      setPrevMonthId(monthId);
+      setPrevYearId(yearId);
     },
     multiple: false,
   });
@@ -112,6 +117,7 @@ const AdminUploadModule = ({
         selectionChange={(selectedItems) =>
           onSelectionChange("selectedMonths", selectedItems)
         }
+        prev = {prevMonthId}
       />
       <AdminCheckList
         type="연도"
@@ -120,6 +126,7 @@ const AdminUploadModule = ({
         selectionChange={(selectedItems) =>
           onSelectionChange("selectedYears", selectedItems)
         }
+        prev = {prevYearId}
       />
       <ListButton onClick={onCreateList}>
         <ListButtonText>업로드</ListButtonText>
