@@ -99,7 +99,7 @@ const Input = () => {
       setIsDownloading(false);
       return;
     } else if (codeArr.length > 50) {
-      alert("현재는 50문항 이내로만 다운로드 가능합니다.");
+      alert("현재는 50문항 이하로만 다운로드 가능합니다.");
       setIsDownloading(false);
       return;
     }
