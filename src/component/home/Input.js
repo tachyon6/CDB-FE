@@ -203,13 +203,13 @@ const Input = () => {
           <Input2Box>
             <Input2Container>
               <Input2
-                placeholder="Ex) 211109A 221130B 230622"
+                placeholder="예시) 231109 240630A 240930B 241130C"
                 value={inputCodes}
                 onChange={(e) => setInputCodes(e.target.value)}
                 onKeyPress={handleKeyPress}
               ></Input2>
               <TextArea
-                placeholder="Ex) 211109A 221130B 230622"
+                placeholder="예시) 231109 240630A 240930B 241130C"
                 value={inputCodes}
                 onChange={(e) => setInputCodes(e.target.value)}
                 onKeyPress={handleKeyPress}
@@ -260,9 +260,9 @@ const Input = () => {
             <CaptionFrame>A형 → A / B형 → B (2012~2016학년도)</CaptionFrame>
             <CaptionFrame>가형 → A / 나형 → B (2017~2021학년도)</CaptionFrame>
             <CaptionFrame>
-              확통 → A / 미적분 → B / 기하 → C (2022~2024학년도)
+              확통 → A / 미적분 → B / 기하 → C (2022~2024학년도, 23~30번)
             </CaptionFrame>
-            <CaptionFrame>공통 문항 → 없음</CaptionFrame>
+            <CaptionFrame>공통 문항 → 없음 (2022~2024학년도, 1~22번)</CaptionFrame>
           </CaptionFrameContainer>
         </Caption2>
       </InputFieldContainer>
@@ -454,7 +454,7 @@ const TextArea = styled.textarea`
     align-items: flex-start;
     gap: 0.5rem;
     align-self: stretch;
-
+    font-family: "Pretendard Variable";
     border-radius: 0.375rem;
     border: 1px solid var(--Gray-300, #dee2e6);
     background: var(--Default-White, #fff);

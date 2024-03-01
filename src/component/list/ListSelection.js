@@ -2,7 +2,6 @@ import React, { forwardRef } from "react";
 import styled from "styled-components";
 
 const ListSelection = forwardRef(({ list }, ref) => {
-
   const handleCopy = () => {
     const textToCopy = list.join(" "); // 리스트 항목을 공백으로 구분하여 하나의 문자열로 합침
     navigator.clipboard
@@ -29,7 +28,14 @@ const ListSelection = forwardRef(({ list }, ref) => {
         </SelectionSubTitle>
       </SelectionTitleContainer>
       <SelectionItemContainer>
-        <ListSelectionTitle>문제 리스트 : 총 {list.length}문항</ListSelectionTitle>
+        <ListSelectionTitle>
+          문제 리스트 : 총 {list.length}문항
+        </ListSelectionTitle>
+        {list.length > 50 && (
+          <ListSelectionAlert>
+            현재 문제는 50문항 이하로만 다운로드 가능합니다.
+          </ListSelectionAlert>
+        )}
         <ListSelectionItem>{list.map((item) => item + " ")}</ListSelectionItem>
       </SelectionItemContainer>
       <ListSelectionButton onClick={handleCopy}>
@@ -214,4 +220,16 @@ const ListSelectionButtonText = styled.div`
   font-weight: 700;
   line-height: normal;
   letter-spacing: -0.01rem;
+`;
+
+const ListSelectionAlert = styled.div`
+  display: flex;
+  padding: 0.5rem 1rem;
+  align-items: center;
+  gap: 0.5rem;
+  align-self: stretch;
+  color: var(--Primary-Strong, #4a3aff);
+  font-size: 0.75rem;
+  background: var(--Primary-Light, #e6e3ff);
+  border-radius: 0.5rem;
 `;
