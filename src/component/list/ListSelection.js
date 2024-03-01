@@ -33,7 +33,7 @@ const ListSelection = forwardRef(({ list }, ref) => {
         </ListSelectionTitle>
         {list.length > 50 && (
           <ListSelectionAlert>
-            현재 문제는 50문항 이하로만 다운로드 가능합니다.
+            현재는 50문항 이하로만 다운로드 가능합니다.
           </ListSelectionAlert>
         )}
         <ListSelectionItem>{list.map((item) => item + " ")}</ListSelectionItem>
